@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Question, Subject } from '../types';
 import { Trophy, RefreshCw, Home, XCircle, CheckCircle, Download, BrainCircuit, Loader2 } from 'lucide-react';
@@ -163,6 +162,32 @@ const ResultsView: React.FC<ResultsViewProps> = ({ subject, questions, answers, 
     doc.save(`ZOT_Quiz_Report_${subject}_${Date.now()}.pdf`);
   };
 
+  // Helper for rendering math superscripts (e.g. 2^3 -> 2³) and subscripts (H_2O -> H₂O)
+  const formatText = (text: string) => {
+    if (!text) return "";
+    const parts = text.split(/([_^](?:\([^)]+\)|\{[^}]+\}|-?\d+|[a-zA-Z0-9]+))/g);
+    
+    return parts.map((part, index) => {
+      if (part.startsWith('^')) {
+        let content = part.substring(1);
+        if ((content.startsWith('(') && content.endsWith(')')) || 
+            (content.startsWith('{') && content.endsWith('}'))) {
+          content = content.substring(1, content.length - 1);
+        }
+        return <sup key={index} className="text-xs align-super font-semibold">{content}</sup>;
+      }
+      if (part.startsWith('_')) {
+        let content = part.substring(1);
+        if ((content.startsWith('(') && content.endsWith(')')) || 
+            (content.startsWith('{') && content.endsWith('}'))) {
+          content = content.substring(1, content.length - 1);
+        }
+        return <sub key={index} className="text-xs align-sub font-semibold">{content}</sub>;
+      }
+      return <span key={index}>{part}</span>;
+    });
+  };
+
   return (
     <div className="max-w-3xl mx-auto text-center animate-fade-in">
       <div className="bg-white rounded-2xl shadow-lg p-8 mb-6">
@@ -225,19 +250,19 @@ const ResultsView: React.FC<ResultsViewProps> = ({ subject, questions, answers, 
                   </div>
                   <div className="w-full">
                     <div className="flex justify-between items-start">
-                        <p className="text-gray-900 font-medium mb-2">{idx + 1}. {q.text}</p>
+                        <p className="text-gray-900 font-medium mb-2">{idx + 1}. {formatText(q.text)}</p>
                     </div>
                     <div className="text-sm space-y-1">
                        <p className={isCorrect ? "text-green-700" : "text-red-600"}>
-                         <span className="font-semibold">Your Answer:</span> {isSkipped ? "Skipped (Time out)" : q.options[userIndex]}
+                         <span className="font-semibold">Your Answer:</span> {isSkipped ? "Skipped (Time out)" : formatText(q.options[userIndex])}
                        </p>
                        {!isCorrect && (
                          <p className="text-green-700">
-                           <span className="font-semibold">Correct Answer:</span> {q.options[q.correctAnswerIndex]}
+                           <span className="font-semibold">Correct Answer:</span> {formatText(q.options[q.correctAnswerIndex])}
                          </p>
                        )}
                        <p className="text-gray-600 mt-2 italic text-xs border-t border-gray-200/50 pt-2">
-                         {q.explanation}
+                         {formatText(q.explanation)}
                        </p>
                        
                        {/* Feature: Thinking Mode Trigger - Styled as a clear button */}
@@ -265,7 +290,7 @@ const ResultsView: React.FC<ResultsViewProps> = ({ subject, questions, answers, 
                                            <BrainCircuit className="w-3 h-3 mr-1" />
                                            Deep Explanation:
                                        </div>
-                                       {deepExplanation}
+                                       {formatText(deepExplanation || "")}
                                    </div>
                                )}
                            </div>

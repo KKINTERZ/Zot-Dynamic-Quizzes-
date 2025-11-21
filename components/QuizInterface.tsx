@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Question, Subject } from '../types';
 import { generateTTS } from '../services/geminiService';
@@ -50,6 +49,39 @@ const QuizInterface: React.FC<QuizInterfaceProps> = ({ subject, questions, onCom
 
     // Minimum 45 seconds, Maximum 300 seconds (5 minutes)
     return Math.max(45, Math.min(300, calculatedTime));
+  };
+
+  // Helper for rendering math superscripts (e.g. 2^3 -> 2³) and subscripts (H_2O -> H₂O)
+  const formatText = (text: string) => {
+    if (!text) return "";
+    // Regex matches ^ or _ followed by:
+    // 1. (parentheses group)
+    // 2. {curly braces group}
+    // 3. or alphanumeric sequence (including negative numbers like -5)
+    const parts = text.split(/([_^](?:\([^)]+\)|\{[^}]+\}|-?\d+|[a-zA-Z0-9]+))/g);
+    
+    return parts.map((part, index) => {
+      if (part.startsWith('^')) {
+        let content = part.substring(1);
+        // Strip outer parens/braces if present
+        if ((content.startsWith('(') && content.endsWith(')')) || 
+            (content.startsWith('{') && content.endsWith('}'))) {
+          content = content.substring(1, content.length - 1);
+        }
+        return <sup key={index} className="text-xs align-super font-semibold">{content}</sup>;
+      }
+      if (part.startsWith('_')) {
+        let content = part.substring(1);
+        // Strip outer parens/braces if present
+        if ((content.startsWith('(') && content.endsWith(')')) || 
+            (content.startsWith('{') && content.endsWith('}'))) {
+          content = content.substring(1, content.length - 1);
+        }
+        return <sub key={index} className="text-xs align-sub font-semibold">{content}</sub>;
+      }
+      // Render normal text
+      return <span key={index}>{part}</span>;
+    });
   };
 
   // Reset timer when question changes
@@ -214,6 +246,7 @@ const QuizInterface: React.FC<QuizInterfaceProps> = ({ subject, questions, onCom
        }
 
        setIsLoadingAudio(true);
+       // TTS text should be plain for better reading
        const textToRead = `Question ${currentQuestionIndex + 1}. ${currentQuestion.text}. Option A. ${currentQuestion.options[0]}. Option B. ${currentQuestion.options[1]}. Option C. ${currentQuestion.options[2]}. Option D. ${currentQuestion.options[3]}.`;
 
        const base64Audio = await generateTTS(textToRead);
@@ -380,7 +413,7 @@ const QuizInterface: React.FC<QuizInterfaceProps> = ({ subject, questions, onCom
         />
 
         <h3 className="text-xl font-medium text-gray-900 mb-6 leading-relaxed">
-          {currentQuestion.text}
+          {formatText(currentQuestion.text)}
         </h3>
 
         <div className="space-y-3">
@@ -412,7 +445,7 @@ const QuizInterface: React.FC<QuizInterfaceProps> = ({ subject, questions, onCom
                 <span className="flex-shrink-0 w-8 h-8 rounded-full bg-white border border-gray-200 flex items-center justify-center text-sm font-semibold text-gray-600 mr-4">
                   {String.fromCharCode(65 + idx)}
                 </span>
-                <span className="flex-grow">{option}</span>
+                <span className="flex-grow">{formatText(option)}</span>
                 {icon}
               </button>
             );
@@ -423,7 +456,7 @@ const QuizInterface: React.FC<QuizInterfaceProps> = ({ subject, questions, onCom
           <div className="mt-6 p-4 bg-green-50 rounded-lg border border-green-100 animate-fade-in">
             <p className="text-sm font-semibold text-green-900 mb-1">Explanation:</p>
             <p className="text-sm text-green-800">
-               {currentQuestion.explanation}
+               {formatText(currentQuestion.explanation)}
             </p>
             {selectedOption === -1 && (
                 <p className="text-sm text-red-600 mt-2 font-medium">Time expired for this question.</p>

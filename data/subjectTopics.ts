@@ -15,14 +15,22 @@ export const LITERATURE_BOOKS = [
   "Novel: Uneasy Yoke (K.A. Banda)",
   "Novel: Animal Farm (George Orwell)",
   "Novel: Jungle Pilot (Russell T. Hitt)",
+  "Novel: Mission to Kala (Mongo Beti)",
+  "Novel: The Concubine (Elechi Amadi)",
+  "Novel: Mine Boy (Peter Abrahams)",
+  "Novel: Weep Not, Child (Ngugi wa Thiong'o)",
   
   // Plays (Drama) - African, Non-African & Shakespeare
   "Play: The Lion and the Jewel (Wole Soyinka)",
+  "Play: Kong's Harvest (Wole Soyinka)",
   "Play: Inheritance (David Mulwa)",
   "Play: The Government Inspector (Nikolai Gogol)",
+  "Play: Betrayal in the City (Francis Imbuga)",
+  "Play: A Raisin in the Sun (Lorraine Hansberry)",
   "Play: Macbeth (William Shakespeare)",
   "Play: Romeo and Juliet (William Shakespeare)",
-  "Play: Julius Caesar (William Shakespeare)"
+  "Play: Julius Caesar (William Shakespeare)",
+  "Play: Othello (William Shakespeare)"
 ];
 
 export const SUBJECT_TOPICS: Record<Subject, string[]> = {
