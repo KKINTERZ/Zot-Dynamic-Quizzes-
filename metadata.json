@@ -1,0 +1,7 @@
+{
+  "name": "ZOT Dynamic Quizzes",
+  "description": "An AI-powered dynamic quiz application focused on the Zambian ECZ syllabus. Generate quizzes for various subjects using the Gemini API.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
