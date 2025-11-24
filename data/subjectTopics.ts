@@ -1,5 +1,5 @@
 
-import { Subject } from '../types';
+import { Subject, EducationLevel } from '../types';
 
 export const ZAMBIAN_LANGUAGES = [
   "Bemba", "Nyanja", "Tonga", "Lozi", "Kaonde", "Lunda", "Luvale"
@@ -33,144 +33,675 @@ export const LITERATURE_BOOKS = [
   "Play: Othello (William Shakespeare)"
 ];
 
-export const SUBJECT_TOPICS: Record<Subject, string[]> = {
+export interface TopicDef {
+  topic: string;
+  icon: string;
+  levels?: EducationLevel[]; // If undefined, available for all levels
+  description?: string;
+}
+
+export const SUBJECT_TOPICS: Record<Subject, TopicDef[]> = {
   [Subject.Mathematics]: [
-    "Sets & Theory", "Index Notation", "Algebra & Equations", "Matrices", 
-    "Similarity & Congruence", "Travel Graphs", "Social & Commercial Arithmetic", 
-    "Statistics & Probability", "Geometry & Angles", "Trigonometry", 
-    "Calculus (Diff/Int)", "Vectors", "Functions", "Earth Geometry", "Linear Programming"
+    // --- Primary Level Topics ---
+    { topic: "Numbers & Notation", icon: "Hash", levels: [EducationLevel.Primary], description: "Reading, writing, and understanding numbers." },
+    { topic: "Sets", icon: "Layers", levels: [EducationLevel.Primary], description: "Grouping objects and basic set diagrams." },
+    { topic: "Addition", icon: "Plus", levels: [EducationLevel.Primary], description: "Summing whole numbers and decimals." },
+    { topic: "Subtraction", icon: "Minus", levels: [EducationLevel.Primary], description: "Taking away and finding differences." },
+    { topic: "Number Patterns", icon: "MoreHorizontal", levels: [EducationLevel.Primary], description: "Sequences and predicting next numbers." },
+    { topic: "Plane Shapes", icon: "Square", levels: [EducationLevel.Primary], description: "2D shapes like squares, circles, triangles." },
+    { topic: "Measures/Measurement", icon: "Ruler", levels: [EducationLevel.Primary], description: "Length, mass, capacity, and time." },
+    { topic: "Multiplication", icon: "X", levels: [EducationLevel.Primary], description: "Times tables and multiplying numbers." },
+    { topic: "Division", icon: "Divide", levels: [EducationLevel.Primary], description: "Sharing and grouping numbers." },
+    { topic: "Relations & Mappings", icon: "GitMerge", levels: [EducationLevel.Primary], description: "Connecting inputs to outputs." },
+    { topic: "Statistics", icon: "BarChart", levels: [EducationLevel.Primary], description: "Data handling, graphs, and averages." },
+    { topic: "Solid Shapes", icon: "Box", levels: [EducationLevel.Primary], description: "3D shapes like cubes, prisms, cylinders." },
+    { topic: "Fractions", icon: "PieChart", levels: [EducationLevel.Primary], description: "Parts of a whole and mixed numbers." },
+    { topic: "Angles", icon: "Triangle", levels: [EducationLevel.Primary], description: "Types of angles and measuring degrees." },
+    { topic: "Combined Operations", icon: "Calculator", levels: [EducationLevel.Primary], description: "BODMAS and order of operations." },
+    { topic: "Factors and Multiples", icon: "List", levels: [EducationLevel.Primary], description: "LCM, HCF, and divisibility rules." },
+    { topic: "Decimals", icon: "CircleDot", levels: [EducationLevel.Primary], description: "Decimal place value and operations." },
+    { topic: "Social and Commercial Arithmetic", icon: "Banknote", levels: [EducationLevel.Primary], description: "Money, profit, loss, and budgets." },
+    { topic: "Index Notation", icon: "Superscript", levels: [EducationLevel.Primary], description: "Powers of numbers (e.g., squared, cubed)." },
+    { topic: "Prime Factors", icon: "Hash", levels: [EducationLevel.Primary], description: "Breaking numbers into prime parts." },
+    { topic: "Approximation", icon: "Target", levels: [EducationLevel.Primary], description: "Rounding off and significant figures." },
+    { topic: "Ratio and Proportion", icon: "Percent", levels: [EducationLevel.Primary], description: "Comparing quantities and direct proportion." },
+    { topic: "Linear Equations in One Variable", icon: "Equal", levels: [EducationLevel.Primary], description: "Solving simple algebraic equations." },
+    { topic: "Percentages", icon: "Percent", levels: [EducationLevel.Primary], description: "Converting fractions to percentages." },
+    { topic: "Integers", icon: "MinusCircle", levels: [EducationLevel.Primary], description: "Positive and negative numbers." },
+    { topic: "Number Bases", icon: "Binary", levels: [EducationLevel.Primary], description: "Counting in base 2, base 5, and base 10." },
+    { topic: "Number and Sequences", icon: "ListOrdered", levels: [EducationLevel.Primary], description: "Arithmetic progressions and rules." },
+    { topic: "Inequations", icon: "ChevronRight", levels: [EducationLevel.Primary], description: "Greater than, less than inequalities." },
+
+    // --- Junior Secondary Level Topics ---
+    { topic: "Sets", icon: "Layers", levels: [EducationLevel.JuniorSecondary], description: "Set notation, operations, and Venn diagrams." },
+    { topic: "Integers", icon: "MinusCircle", levels: [EducationLevel.JuniorSecondary], description: "Operations with positive and negative numbers." },
+    { topic: "Approximation & Estimation", icon: "Target", levels: [EducationLevel.JuniorSecondary], description: "Significant figures, decimal places, and estimation." },
+    { topic: "Ratio & Proportion", icon: "Percent", levels: [EducationLevel.JuniorSecondary], description: "Direct/inverse proportion and sharing ratios." },
+    { topic: "Algebraic Expressions & Formula", icon: "Sigma", levels: [EducationLevel.JuniorSecondary], description: "Simplifying, substitution, and changing subject of formula." },
+    { topic: "Social & Commercial Arithmetic", icon: "Banknote", levels: [EducationLevel.JuniorSecondary], description: "Interest, bills, exchange rates, and profit/loss." },
+    { topic: "Cartesian Plane", icon: "Grid", levels: [EducationLevel.JuniorSecondary], description: "Coordinates, plotting points, and straight lines." },
+    { topic: "Functions", icon: "Webhook", levels: [EducationLevel.JuniorSecondary], description: "Mapping diagrams, domain, range, and simple functions." },
+    { topic: "Solid Shapes", icon: "Box", levels: [EducationLevel.JuniorSecondary], description: "Properties of prisms, pyramids, and cylinders." },
+    { topic: "Mensuration", icon: "Ruler", levels: [EducationLevel.JuniorSecondary], description: "Perimeter, area, and volume calculations." },
+    { topic: "Angles", icon: "Triangle", levels: [EducationLevel.JuniorSecondary], description: "Angle properties of lines, triangles, and polygons." },
+    { topic: "Geometrical Construction", icon: "DraftingCompass", levels: [EducationLevel.JuniorSecondary], description: "Bisecting lines/angles and constructing shapes." },
+    { topic: "Statistics", icon: "BarChart", levels: [EducationLevel.JuniorSecondary], description: "Data collection, charts, mean, mode, and median." },
+    { topic: "Number Bases", icon: "Binary", levels: [EducationLevel.JuniorSecondary], description: "Binary (Base 2) and Base 5 arithmetic." },
+    { topic: "Computers", icon: "Monitor", levels: [EducationLevel.JuniorSecondary], description: "Flowcharts and basic algorithms in math." },
+    { topic: "Square Roots & Cube Roots", icon: "Calculator", levels: [EducationLevel.JuniorSecondary], description: "Calculating roots and using tables." },
+    { topic: "Index Notation", icon: "Superscript", levels: [EducationLevel.JuniorSecondary], description: "Laws of indices and standard form." },
+    { topic: "Real Numbers", icon: "Hash", levels: [EducationLevel.JuniorSecondary], description: "Rational and irrational numbers." },
+    { topic: "Pythagoras' Theorem", icon: "Triangle", levels: [EducationLevel.JuniorSecondary], description: "Right-angled triangles and hypotenuse." },
+    { topic: "Directions & Bearings", icon: "Compass", levels: [EducationLevel.JuniorSecondary], description: "Compass points and three-figure bearings." },
+    { topic: "Equations & Inequations", icon: "Equal", levels: [EducationLevel.JuniorSecondary], description: "Solving linear equations and inequalities." },
+    { topic: "Matrices", icon: "Grid3X3", levels: [EducationLevel.JuniorSecondary], description: "Introduction to matrices, addition, and subtraction." },
+    { topic: "Similarity & Congruency", icon: "Copy", levels: [EducationLevel.JuniorSecondary], description: "Tests for similarity and congruence in triangles." },
+    { topic: "Probability", icon: "Dices", levels: [EducationLevel.JuniorSecondary], description: "Theoretical and experimental probability." },
+
+    // --- Senior Secondary Level Topics (Restricted) ---
+    { topic: "Sets & Theory", icon: "Layers", levels: [EducationLevel.SeniorSecondary], description: "Advanced set theory and probability applications." },
+    { topic: "Index Notation", icon: "Binary", levels: [EducationLevel.SeniorSecondary], description: "Advanced indices and equations." },
+    { topic: "Algebra & Equations", icon: "Sigma", levels: [EducationLevel.SeniorSecondary], description: "Quadratics, factorization, and algebraic fractions." }, 
+    { topic: "Matrices", icon: "Grid3X3", levels: [EducationLevel.SeniorSecondary], description: "Matrix multiplication, determinants, and inverse." },
+    { topic: "Similarity & Congruence", icon: "Copy", levels: [EducationLevel.SeniorSecondary], description: "Advanced applications in area and volume." },
+    { topic: "Travel Graphs", icon: "TrendingUp", levels: [EducationLevel.SeniorSecondary], description: "Distance-time and speed-time graphs." },
+    { topic: "Social & Commercial Arithmetic", icon: "Banknote", levels: [EducationLevel.SeniorSecondary], description: "Advanced finance, taxation, and investments." },
+    { topic: "Statistics & Probability", icon: "BarChart3", levels: [EducationLevel.SeniorSecondary], description: "Cumulative frequency, standard deviation, and combined events." },
+    { topic: "Geometry & Angles", icon: "Triangle", levels: [EducationLevel.SeniorSecondary], description: "Circle theorems and tangent properties." },
+    { topic: "Trigonometry", icon: "Activity", levels: [EducationLevel.SeniorSecondary], description: "Sine/Cosine rules, bearings, and 3D trig." },
+    { topic: "Calculus (Diff/Int)", icon: "FunctionSquare", levels: [EducationLevel.SeniorSecondary], description: "Differentiation and integration of basic functions." },
+    { topic: "Vectors", icon: "MoveDiagonal", levels: [EducationLevel.SeniorSecondary], description: "Vector geometry, addition, subtraction, and translation." },
+    { topic: "Functions", icon: "Webhook", levels: [EducationLevel.SeniorSecondary], description: "Function notation, inverse functions, and composite functions." },
+    { topic: "Earth Geometry", icon: "Globe", levels: [EducationLevel.SeniorSecondary], description: "Latitude, longitude, and distance calculation on the earth's surface." },
+    { topic: "Linear Programming", icon: "Maximize", levels: [EducationLevel.SeniorSecondary], description: "Inequalities and optimization using graphical methods." }
   ],
   [Subject.Biology]: [
-    "Living Organisms", "Cell Organization", "Enzymes", "Plant Nutrition", 
-    "Animal Nutrition", "Respiratory System", "Transport in Plants/Animals", 
-    "Excretion & Homeostasis", "Nervous System & Sense Organs", 
-    "Skeletons & Locomotion", "Reproduction & Growth", "Genetics & Heredity", "Ecology"
+    { topic: "Living Organisms and Life Processes", icon: "Sprout", levels: [EducationLevel.SeniorSecondary], description: "Characteristics of living things and classification." },
+    { topic: "Cell Structure and Organisation", icon: "Microscope", levels: [EducationLevel.SeniorSecondary], description: "Plant and animal cell structures and specialization." },
+    { topic: "Enzymes", icon: "Scissors", levels: [EducationLevel.SeniorSecondary], description: "Biological catalysts and factors affecting their activity." },
+    { topic: "Nutrients", icon: "Apple", levels: [EducationLevel.SeniorSecondary], description: "Food substances, vitamins, and minerals." },
+    { topic: "Nutrition in Plants", icon: "Sun", levels: [EducationLevel.SeniorSecondary], description: "Photosynthesis, leaf structure, and mineral nutrition." },
+    { topic: "Saprophytic Nutrition", icon: "Mushroom", levels: [EducationLevel.SeniorSecondary], description: "Feeding on dead organic matter (e.g., Fungi)." },
+    { topic: "Nutrition in Animals", icon: "Utensils", levels: [EducationLevel.SeniorSecondary], description: "Diet, digestion system, and absorption." },
+    { topic: "Respiratory System", icon: "Wind", levels: [EducationLevel.SeniorSecondary], description: "Gaseous exchange, breathing mechanisms, and respiration." },
+    { topic: "Health", icon: "HeartPulse", levels: [EducationLevel.SeniorSecondary], description: "Disease prevention, immunity, and HIV/AIDS." },
+    { topic: "Transport and Storage in Plants", icon: "Droplet", levels: [EducationLevel.SeniorSecondary], description: "Xylem, phloem, and transpiration." },
+    { topic: "Transport in Man", icon: "Heart", levels: [EducationLevel.SeniorSecondary], description: "Blood, heart structure, and circulation." },
+    { topic: "Excretion", icon: "Trash2", levels: [EducationLevel.SeniorSecondary], description: "Removal of metabolic waste, kidneys, and lungs." },
+    { topic: "Homeostasis and Osmoregulation", icon: "Scale", levels: [EducationLevel.SeniorSecondary], description: "Maintaining internal body environment and water balance." },
+    { topic: "The Endocrine System", icon: "Activity", levels: [EducationLevel.SeniorSecondary], description: "Hormones and glands." },
+    { topic: "The Nervous System and Sense Organs", icon: "Brain", levels: [EducationLevel.SeniorSecondary], description: "Brain, nerves, reflex arc, eye, and ear." },
+    { topic: "The Skeleton and Locomotion", icon: "Bone", levels: [EducationLevel.SeniorSecondary], description: "Bones, joints, and muscles." },
+    { topic: "Tropic and Taxic Responses", icon: "Move", levels: [EducationLevel.SeniorSecondary], description: "Plant responses to stimuli." },
+    { topic: "Growth and Development", icon: "TrendingUp", levels: [EducationLevel.SeniorSecondary], description: "Germination and growth patterns." },
+    { topic: "Asexual Reproduction", icon: "Copy", levels: [EducationLevel.SeniorSecondary], description: "Reproduction without gametes (e.g., binary fission)." },
+    { topic: "Sexual Reproduction in Flowering Plants", icon: "Flower", levels: [EducationLevel.SeniorSecondary], description: "Pollination, fertilization, and seed dispersal." },
+    { topic: "Reproduction in Animals", icon: "Baby", levels: [EducationLevel.SeniorSecondary], description: "Fertilization, development, and birth." },
+    { topic: "Genetics", icon: "Dna", levels: [EducationLevel.SeniorSecondary], description: "Inheritance, variation, and selection." },
+    { topic: "Classification of Plants and Animals", icon: "List", levels: [EducationLevel.SeniorSecondary], description: "Taxonomy and identifying species." },
+    { topic: "The Soil", icon: "Layers", levels: [EducationLevel.SeniorSecondary], description: "Soil composition, types, and fertility." },
+    { topic: "Ecology", icon: "Globe", levels: [EducationLevel.SeniorSecondary], description: "Ecosystems, food chains, and cycles." }
   ],
   [Subject.Physics]: [
-    "General Physics & Measurement", "Mechanics & Motion", "Energy, Work & Power", 
-    "Thermal Physics", "Light & Reflection", "Sound & Waves", 
-    "Magnetism", "Static & Current Electricity", "Atomic Physics", "Basic Electronics"
+    { topic: "General Physics & Measurement", icon: "Ruler", description: "Units, density, and measuring instruments." },
+    { topic: "Mechanics & Motion", icon: "Gauge", description: "Speed, velocity, acceleration, forces, and newton's laws." },
+    { topic: "Energy, Work & Power", icon: "Zap", description: "Forms of energy, work done, and power calculations." },
+    { topic: "Thermal Physics", icon: "Flame", description: "Heat transfer, expansion, and gas laws." },
+    { topic: "Light & Reflection", icon: "Lightbulb", description: "Reflection, refraction, lenses, and optical instruments." },
+    { topic: "Sound & Waves", icon: "Waves", description: "Wave properties, sound transmission, and echoes." },
+    { topic: "Magnetism", icon: "Magnet", description: "Magnetic fields, domains, and electromagnetism." },
+    { topic: "Static & Current Electricity", icon: "Plug", description: "Circuits, Ohm's law, voltage, and electrical safety." },
+    { topic: "Atomic Physics", icon: "Atom", description: "Radioactivity, half-life, and atomic structure." },
+    { topic: "Basic Electronics", icon: "Cpu", description: "Diodes, capacitors, and logic gates." }
   ],
   [Subject.Chemistry]: [
-    "Particulate Nature of Matter", "Experimental Techniques", "Atoms, Elements & Compounds", 
-    "Stoichiometry & Mole Concept", "The Periodic Table", "Chemical Bonding", 
-    "Acids, Bases & Salts", "Chemical Kinetics & Equilibrium", "Redox Reactions", 
-    "Metals & Extraction", "Non-Metals", "Organic Chemistry"
+    { topic: "Introduction to Chemistry", icon: "FlaskConical", levels: [EducationLevel.SeniorSecondary], description: "Basic concepts and scope of chemistry." },
+    { topic: "The Particulate Nature of Matter", icon: "ScatterChart", levels: [EducationLevel.SeniorSecondary], description: "States of matter, kinetic theory, and diffusion." },
+    { topic: "Experimental Techniques", icon: "TestTube", levels: [EducationLevel.SeniorSecondary], description: "Apparatus, measurements, and separation techniques." },
+    { topic: "Atoms, Elements, Compounds and Molecules", icon: "Hexagon", levels: [EducationLevel.SeniorSecondary], description: "Atomic structure, bonding, and classification of matter." },
+    { topic: "Acids, Bases and Salts", icon: "Droplet", levels: [EducationLevel.SeniorSecondary], description: "pH, properties, neutralization, and salt preparation." },
+    { topic: "The Mole Concept", icon: "Scale", levels: [EducationLevel.SeniorSecondary], description: "Stoichiometry, chemical formulae, and equations." },
+    { topic: "Chemical Reactions", icon: "RefreshCw", levels: [EducationLevel.SeniorSecondary], description: "Rates of reaction, equilibrium, and redox." },
+    { topic: "The Periodic Table", icon: "Table", levels: [EducationLevel.SeniorSecondary], description: "Trends, groups, and periods." },
+    { topic: "Chemistry and Electricity", icon: "Zap", levels: [EducationLevel.SeniorSecondary], description: "Electrolysis and electrochemical cells." },
+    { topic: "Metals", icon: "Hammer", levels: [EducationLevel.SeniorSecondary], description: "Properties, reactivity series, and extraction." },
+    { topic: "Non-Metals", icon: "Cloud", levels: [EducationLevel.SeniorSecondary], description: "Hydrogen, nitrogen, oxygen, sulfur, and chlorine." },
+    { topic: "Organic Chemistry", icon: "Component", levels: [EducationLevel.SeniorSecondary], description: "Hydrocarbons, alcohols, and polymers." }
   ],
   [Subject.Civics]: [
-    "The Constitution", "Governance Systems", "Citizenship", "Human Rights", 
-    "Corruption", "Cultural Studies", "Substance Abuse", "Family Law", 
-    "Development Planning", "Global Issues & Poverty", "International Relations"
+    { topic: "Human Rights and Freedoms", icon: "Hand", levels: [EducationLevel.SeniorSecondary], description: "Universal rights, basic freedoms, and violation redress." },
+    { topic: "The Rule of Law and Constitutionalism", icon: "Scale", levels: [EducationLevel.SeniorSecondary], description: "Supremacy of law and constitutional principles." },
+    { topic: "Citizenship and National Identity", icon: "Users", levels: [EducationLevel.SeniorSecondary], description: "Duties, responsibilities, and qualifications of a citizen." },
+    { topic: "Elections and Political Participation", icon: "CheckSquare", levels: [EducationLevel.SeniorSecondary], description: "Voting systems, electoral process, and civic engagement." },
+    { topic: "Separation of Powers and the Organs of Government", icon: "Landmark", levels: [EducationLevel.SeniorSecondary], description: "Functions of the Legislature, Executive, and Judiciary." },
+    { topic: "Local Government and Decentralization", icon: "Building2", levels: [EducationLevel.SeniorSecondary], description: "Functions of councils and local administration." },
+    { topic: "Corruption and Accountability", icon: "ShieldAlert", levels: [EducationLevel.SeniorSecondary], description: "Causes, effects, and prevention of corruption." },
+    { topic: "Peace, Conflict, and Security", icon: "Shield", levels: [EducationLevel.SeniorSecondary], description: "Conflict resolution, peace building, and national security." },
+    { topic: "Global Issues and International Relations", icon: "Globe", levels: [EducationLevel.SeniorSecondary], description: "International cooperation, organizations, and global challenges." },
+    { topic: "Civic Responsibilities and Duties", icon: "ListChecks", levels: [EducationLevel.SeniorSecondary], description: "Obligations of a good citizen towards the nation." },
+    { topic: "Development, Justice, and Equity", icon: "TrendingUp", levels: [EducationLevel.SeniorSecondary], description: "National development planning and social justice." }
   ],
   [Subject.English]: [
-    "Structure (Grammar)", "Comprehension", "Summary Writing", "Rewrites/Transformations", 
-    "Vocabulary", "Idioms & Phrasal Verbs"
+    // --- Secondary Levels (Junior & Senior) ---
+    { topic: "Listening and Speaking", icon: "Mic", levels: [EducationLevel.JuniorSecondary, EducationLevel.SeniorSecondary], description: "Oral communication skills." },
+    { topic: "Reading", icon: "BookOpen", levels: [EducationLevel.JuniorSecondary], description: "Reading comprehension skills." },
+    { topic: "Reading and Comprehension", icon: "BookOpen", levels: [EducationLevel.SeniorSecondary], description: "Understanding and interpreting written passages." },
+    { topic: "Composition", icon: "PenTool", levels: [EducationLevel.JuniorSecondary, EducationLevel.SeniorSecondary], description: "Creative and functional writing." },
+    { topic: "Structure", icon: "Braces", levels: [EducationLevel.JuniorSecondary, EducationLevel.SeniorSecondary], description: "Grammar rules and usage." },
+    { topic: "Summary", icon: "FileText", levels: [EducationLevel.JuniorSecondary, EducationLevel.SeniorSecondary], description: "Summarizing information." },
+
+    // --- Senior Secondary Specific ---
+    { topic: "Rewrites/Transformations", icon: "PenLine", levels: [EducationLevel.SeniorSecondary], description: "Rephrasing sentences using specific structures." },
+    { topic: "Vocabulary", icon: "Languages", levels: [EducationLevel.SeniorSecondary], description: "Synonyms, antonyms, and context-based word usage." },
+    { topic: "Idioms & Phrasal Verbs", icon: "MessageCircle", levels: [EducationLevel.SeniorSecondary], description: "Common English expressions and their meanings." },
+
+    // --- Primary Level Specific Topics ---
+    
+    // Core Skills
+    { topic: "Reading", icon: "BookOpen", levels: [EducationLevel.Primary], description: "Reading fluency and understanding." },
+    { topic: "Writing", icon: "PenTool", levels: [EducationLevel.Primary], description: "Composition and creative writing skills." },
+    { topic: "Listening & Speaking", icon: "Mic", levels: [EducationLevel.Primary], description: "Oral communication and auditory skills." },
+
+    // Parts of Speech
+    { topic: "Nouns", icon: "Type", levels: [EducationLevel.Primary], description: "Naming words, types of nouns." },
+    { topic: "Singular & Plural Nouns", icon: "Copy", levels: [EducationLevel.Primary], description: "Number forms and rules." },
+    { topic: "Verbs", icon: "Activity", levels: [EducationLevel.Primary], description: "Action words and states of being." },
+    { topic: "Adjectives", icon: "Star", levels: [EducationLevel.Primary], description: "Describing words and comparisons." },
+    { topic: "Adverbs", icon: "Wind", levels: [EducationLevel.Primary], description: "Modifying verbs, adjectives, and other adverbs." },
+    { topic: "Conjunctions", icon: "Link", levels: [EducationLevel.Primary], description: "Joining words and sentences." },
+
+    // Grammar & Usage
+    { topic: "Tenses", icon: "Clock", levels: [EducationLevel.Primary], description: "Past, present, and future time." },
+    { topic: "Sentence Construction", icon: "Hammer", levels: [EducationLevel.Primary], description: "Building proper sentences." },
+    { topic: "Word & Sentence Order", icon: "AlignLeft", levels: [EducationLevel.Primary], description: "Syntax and arrangement." },
+    { topic: "Direct & Indirect Speech", icon: "MessageSquare", levels: [EducationLevel.Primary], description: "Quoting and reporting speech." },
+    { topic: "Active & Passive Voice", icon: "Repeat", levels: [EducationLevel.Primary], description: "Subject-verb-object relationships." },
+    { topic: "Punctuation", icon: "MoreHorizontal", levels: [EducationLevel.Primary], description: "Using commas, periods, and other marks." },
+
+    // Vocabulary Subtopics
+    { topic: "Vocabulary: Synonyms & Antonyms", icon: "GitCompare", levels: [EducationLevel.Primary], description: "Words with similar and opposite meanings." },
+    { topic: "Vocabulary: Homographs", icon: "Split", levels: [EducationLevel.Primary], description: "Words spelled the same but with different meanings." },
+    { topic: "Vocabulary: Spellings", icon: "CheckCheck", levels: [EducationLevel.Primary], description: "Correct spelling of words." }
   ],
   [Subject.History]: [
-    "Pre-Colonial History", "Migration of Bantu Speaking People", "European Exploration", 
-    "Slave Trade", "Colonial Rule in Zambia", "Federation of Rhodesia & Nyasaland", 
-    "Struggle for Independence", "Post-Independence Zambia", "World History (WWI/WWII)", 
-    "The United Nations"
+    { topic: "Pre-Colonial History", icon: "Footprints", description: "Early societies, migrations, and kingdoms." },
+    { topic: "Migration of Bantu Speaking People", icon: "MoveRight", description: "Origins, routes, and settlement patterns." },
+    { topic: "European Exploration", icon: "Compass", description: "Missionaries, explorers, and early contacts." },
+    { topic: "Slave Trade", icon: "Lock", description: "The triangular trade, impact, and abolition." },
+    { topic: "Colonial Rule in Zambia", icon: "Crown", description: "British administration, taxes, and policies." },
+    { topic: "Federation of Rhodesia & Nyasaland", icon: "Network", description: "Formation, opposition, and dissolution." },
+    { topic: "Struggle for Independence", icon: "FlagTriangleRight", description: "Nationalism, political parties, and liberation." },
+    { topic: "Post-Independence Zambia", icon: "Building2", description: "Development, economics, and politics after 1964." },
+    { topic: "World History (WWI/WWII)", icon: "Swords", description: "Causes, events, and effects of global conflicts." },
+    { topic: "The United Nations", icon: "Globe", description: "Structure, aims, and peacekeeping missions." }
   ],
   [Subject.Geography]: [
-    "Map Reading", "Physical Geography (Earth/Relief)", "Weather & Climate", 
-    "Vegetation & Soil", "Population & Settlement", "Agriculture in Zambia", 
-    "Forestry & Fishing", "Mining & Manufacturing", "Energy & Power", 
-    "Transport & Communication", "Tourism"
+    { topic: "Geography as a Discipline", icon: "BookOpen", levels: [EducationLevel.SeniorSecondary], description: "Scope, importance, and branches of geography." },
+    { topic: "Map Reading and Interpretation", icon: "Map", levels: [EducationLevel.SeniorSecondary], description: "Scales, grid references, contours, and cross-sections." },
+    { topic: "Weather and Climate", icon: "CloudSun", levels: [EducationLevel.SeniorSecondary], description: "Elements, instruments, and climate zones." },
+    { topic: "Geomorphology (Landforms and Processes)", icon: "Mountain", levels: [EducationLevel.SeniorSecondary], description: "Weathering, erosion, rivers, and plate tectonics." },
+    { topic: "Population Geography", icon: "Users", levels: [EducationLevel.SeniorSecondary], description: "Demographics, distribution, migration, and policies." },
+    { topic: "Settlement Geography", icon: "Home", levels: [EducationLevel.SeniorSecondary], description: "Rural and urban settlements, urbanization." },
+    { topic: "Economic Geography", icon: "TrendingUp", levels: [EducationLevel.SeniorSecondary], description: "Agriculture, mining, industry, and tourism." },
+    { topic: "Transport and Communication", icon: "Truck", levels: [EducationLevel.SeniorSecondary], description: "Modes of transport, networks, and telecommunications." },
+    { topic: "Natural Resources and Conservation", icon: "Leaf", levels: [EducationLevel.SeniorSecondary], description: "Resource types, exploitation, and sustainable use." },
+    { topic: "Environmental Issues and Management", icon: "AlertTriangle", levels: [EducationLevel.SeniorSecondary], description: "Pollution, climate change, and environmental protection." },
+    { topic: "Regional Geography of Zambia", icon: "MapPin", levels: [EducationLevel.SeniorSecondary], description: "Detailed study of Zambia's physical and human geography." },
+    { topic: "Regional Geography of Africa", icon: "Globe", levels: [EducationLevel.SeniorSecondary], description: "Case studies and regional patterns in Africa." },
+    { topic: "Regional Geography of the World", icon: "Globe2", levels: [EducationLevel.SeniorSecondary], description: "Global development and economic regions." }
   ],
   [Subject.ReligiousEducation]: [
-    "Birth & Infancy of Jesus", "Ministry of Jesus", "Discipleship", 
-    "Miracles of Jesus", "Parables & Teachings", "Death & Resurrection", 
-    "The Early Church", "Christian Attitudes to Work/Leisure", "Marriage & Family", 
-    "Authority & Leadership"
+    // --- Junior Secondary Topics ---
+    { topic: "Morality and Values", icon: "Scale", levels: [EducationLevel.JuniorSecondary], description: "Right vs wrong and moral decision making." },
+    { topic: "Growing Up", icon: "Sprout", levels: [EducationLevel.JuniorSecondary], description: "Physical, emotional, and spiritual growth." },
+    { topic: "Learning About Religion", icon: "BookHeart", levels: [EducationLevel.JuniorSecondary], description: "Purpose and nature of religion." },
+    { topic: "Choosing and Talents", icon: "Star", levels: [EducationLevel.JuniorSecondary], description: "Decision making and using gifts." },
+    { topic: "Competition, Co-operation and Trust", icon: "Handshake", levels: [EducationLevel.JuniorSecondary], description: "Working together vs striving against." },
+    { topic: "Division, Sin and Forgiveness", icon: "Split", levels: [EducationLevel.JuniorSecondary], description: "Conflict resolution and reconciliation." },
+    { topic: "Learning and Truth", icon: "GraduationCap", levels: [EducationLevel.JuniorSecondary], description: "Education and seeking truth." },
+    { topic: "Freedom and Community", icon: "Unlock", levels: [EducationLevel.JuniorSecondary], description: "Rights and living with others." },
+    { topic: "Authority and Leadership", icon: "Crown", levels: [EducationLevel.JuniorSecondary], description: "Types of leaders and obedience." },
+    { topic: "Ambitions and Hope", icon: "Target", levels: [EducationLevel.JuniorSecondary], description: "Goals and future aspirations." },
+    { topic: "Friendship, Love and Marriage", icon: "Heart", levels: [EducationLevel.JuniorSecondary], description: "Relationships and commitment." },
+    { topic: "Suffering and Bereavement", icon: "Activity", levels: [EducationLevel.JuniorSecondary], description: "Coping with pain and death." },
+    { topic: "Prayer", icon: "MessageCircle", levels: [EducationLevel.JuniorSecondary], description: "Communication with God." },
+
+    // --- Senior Secondary Topics (Restricted) ---
+    { topic: "Birth & Infancy of Jesus", icon: "Baby", levels: [EducationLevel.SeniorSecondary], description: "Nativity stories and early life events." },
+    { topic: "Ministry of Jesus", icon: "Users2", levels: [EducationLevel.SeniorSecondary], description: "Baptism, temptation, and mission." },
+    { topic: "Discipleship", icon: "Footprints", levels: [EducationLevel.SeniorSecondary], description: "Calling of disciples and costs of following." },
+    { topic: "Miracles of Jesus", icon: "Sparkles", levels: [EducationLevel.SeniorSecondary], description: "Healing, nature miracles, and their significance." },
+    { topic: "Parables & Teachings", icon: "BookHeart", levels: [EducationLevel.SeniorSecondary], description: "Kingdom of God teachings and moral lessons." },
+    { topic: "Death & Resurrection", icon: "Sunrise", levels: [EducationLevel.SeniorSecondary], description: "The passion week, crucifixion, and rising." },
+    { topic: "The Early Church", icon: "Church", levels: [EducationLevel.SeniorSecondary], description: "Pentecost, persecution, and spread of gospel." },
+    { topic: "Christian Attitudes to Work/Leisure", icon: "Briefcase", levels: [EducationLevel.SeniorSecondary], description: "Biblical views on labor and rest." },
+    { topic: "Marriage & Family", icon: "HeartHandshake", levels: [EducationLevel.SeniorSecondary], description: "Relationships, roles, and Christian marriage." },
+    { topic: "Authority & Leadership", icon: "Gavel", levels: [EducationLevel.SeniorSecondary], description: "Respect, leadership qualities, and government." }
   ],
   [Subject.Commerce]: [
-    "Production", "Trade (Home/International)", "Banking & Money", "Insurance", 
-    "Transport", "Communication", "Advertising", "Warehousing", "Business Units"
+    { topic: "Production", icon: "Factory", description: "Factors of production and specialization." },
+    { topic: "Trade (Home/International)", icon: "Ship", description: "Buying, selling, imports, and exports." },
+    { topic: "Banking & Money", icon: "PiggyBank", description: "Commercial banks, central bank, and currency." },
+    { topic: "Insurance", icon: "ShieldCheck", description: "Principles, types of policies, and risk." },
+    { topic: "Transport", icon: "Plane", description: "Modes of transport and logistics." },
+    { topic: "Communication", icon: "Phone", description: "Postal services, telecom, and internet." },
+    { topic: "Advertising", icon: "Megaphone", description: "Media, methods, and consumer persuasion." },
+    { topic: "Warehousing", icon: "Container", description: "Storage types and logistics management." },
+    { topic: "Business Units", icon: "Building", description: "Sole traders, partnerships, and companies." }
   ],
   [Subject.Accounts]: [
-    "Accounting Equation", "Double Entry System", "Books of Original Entry", 
-    "The Ledger", "Trial Balance", "Financial Statements", "Adjustments", 
-    "Partnerships", "Non-Profit Organizations"
+    { topic: "Introduction to Accounting", icon: "BookOpen", levels: [EducationLevel.SeniorSecondary], description: "Nature, history and purpose of accounting." },
+    { topic: "Double Entry Principles", icon: "GitCompare", levels: [EducationLevel.SeniorSecondary], description: "Debit and credit rules." },
+    { topic: "Books of Original Entry", icon: "BookMarked", levels: [EducationLevel.SeniorSecondary], description: "Journals, cash books, and day books." },
+    { topic: "Ledger Accounts", icon: "Book", levels: [EducationLevel.SeniorSecondary], description: "Classifying business transactions." },
+    { topic: "Trial Balance", icon: "Scale", levels: [EducationLevel.SeniorSecondary], description: "Testing arithmetic accuracy." },
+    { topic: "Control Accounts", icon: "Activity", levels: [EducationLevel.SeniorSecondary], description: "Monitoring trade receivables and payables." },
+    { topic: "Bank Reconciliation", icon: "Landmark", levels: [EducationLevel.SeniorSecondary], description: "Reconciling cash book and bank statement." },
+    { topic: "Incomplete Records", icon: "FileQuestion", levels: [EducationLevel.SeniorSecondary], description: "Preparing accounts from limited information." },
+    { topic: "Depreciation of Assets", icon: "TrendingDown", levels: [EducationLevel.SeniorSecondary], description: "Accounting for non-current asset value loss." },
+    { topic: "Final Accounts for Sole Traders", icon: "User", levels: [EducationLevel.SeniorSecondary], description: "Income statements and balance sheets." },
+    { topic: "Final Accounts for Partnerships", icon: "Users", levels: [EducationLevel.SeniorSecondary], description: "Appropriation accounts and capital accounts." },
+    { topic: "Company Accounts", icon: "Building", levels: [EducationLevel.SeniorSecondary], description: "Share capital and dividends." },
+    { topic: "Manufacturing Accounts", icon: "Factory", levels: [EducationLevel.SeniorSecondary], description: "Cost of production calculations." },
+    { topic: "Accounts for Non‑Profit Making Organizations", icon: "Heart", levels: [EducationLevel.SeniorSecondary], description: "Receipts, payments, and income & expenditure." },
+    { topic: "Correction of Errors", icon: "Eraser", levels: [EducationLevel.SeniorSecondary], description: "Suspense accounts and correcting mistakes." },
+    { topic: "Financial Statements and Analysis", icon: "BarChart3", levels: [EducationLevel.SeniorSecondary], description: "Ratios and interpreting financial performance." }
   ],
   [Subject.ComputerStudies]: [
-    "Computer Hardware", "Software", "Operating Systems", "Data Representation", 
-    "Networks & Internet", "Computer Security & Ethics", "Word Processing", 
-    "Spreadsheets", "Algorithms & Programming"
+    // --- Junior Secondary Topics ---
+    { topic: "Introduction to Computer Studies", icon: "Monitor", levels: [EducationLevel.JuniorSecondary], description: "Definition, history, and basics of computers." },
+    { topic: "Basic Operations", icon: "Power", levels: [EducationLevel.JuniorSecondary], description: "Booting, shutting down, keyboard, and mouse skills." },
+    { topic: "Generic Application Software", icon: "Package", levels: [EducationLevel.JuniorSecondary], description: "Word processing, spreadsheets, and presentations." },
+    { topic: "Networks and the Internet", icon: "Globe", levels: [EducationLevel.JuniorSecondary], description: "LAN, WAN, browsers, and email." },
+    { topic: "Systems and Communications", icon: "Server", levels: [EducationLevel.JuniorSecondary], description: "Data communication and computer systems." },
+    { topic: "Computer Application", icon: "AppWindow", levels: [EducationLevel.JuniorSecondary], description: "Practical uses of computers in society." },
+    { topic: "Social and Economic Implications of the use of Computers", icon: "Users", levels: [EducationLevel.JuniorSecondary], description: "Impact of computers on work and life." },
+
+    // --- Senior Secondary Topics ---
+    { topic: "Computer career opportunities", icon: "Briefcase", levels: [EducationLevel.SeniorSecondary], description: "Jobs and roles in the IT industry." },
+    { topic: "Application Software", icon: "Package", levels: [EducationLevel.SeniorSecondary], description: "Types and uses of software applications." },
+    { topic: "Programming", icon: "Code", levels: [EducationLevel.SeniorSecondary], description: "Writing and understanding code." },
+    { topic: "Data Representation and processing", icon: "Binary", levels: [EducationLevel.SeniorSecondary], description: "Binary, ASCII, and how computers handle data." },
+    { topic: "Hardware of the computer system", icon: "Cpu", levels: [EducationLevel.SeniorSecondary], description: "Physical components of a computer." },
+    { topic: "Operating systems and file management", icon: "Terminal", levels: [EducationLevel.SeniorSecondary], description: "OS functions and organizing files." },
+    { topic: "Presentation Packages", icon: "Presentation", levels: [EducationLevel.SeniorSecondary], description: "Creating slides and visual presentations." },
+    { topic: "General computer applications", icon: "AppWindow", levels: [EducationLevel.SeniorSecondary], description: "Common uses of computers in daily life." },
+    { topic: "Computer Security (Assets)", icon: "ShieldCheck", levels: [EducationLevel.SeniorSecondary], description: "Protecting data, hardware, and software." },
+    { topic: "Programming and Pseudo Code Algorithms", icon: "Workflow", levels: [EducationLevel.SeniorSecondary], description: "Planning code logic and flow." },
+    { topic: "Logic gates, circuits and Website designing", icon: "Cpu", levels: [EducationLevel.SeniorSecondary], description: "Digital logic and basic web development." },
+    { topic: "Networks and Data Communication", icon: "Network", levels: [EducationLevel.SeniorSecondary], description: "Connecting computers and transferring data." },
+    { topic: "Computer system applications", icon: "Settings", levels: [EducationLevel.SeniorSecondary], description: "Specific uses in business and industry." },
+    { topic: "Databases", icon: "Database", levels: [EducationLevel.SeniorSecondary], description: "Storing and retrieving structured data." },
+    { topic: "Social and economic impact of computers", icon: "Globe", levels: [EducationLevel.SeniorSecondary], description: "Effects on society and economy." },
+    { topic: "Specific computer applications", icon: "Monitor", levels: [EducationLevel.SeniorSecondary], description: "Specialized software uses." },
+    { topic: "Algorithms", icon: "ListOrdered", levels: [EducationLevel.SeniorSecondary], description: "Step-by-step problem solving procedures." },
+    { topic: "Programming and Structure Query language (SQL)", icon: "DatabaseZap", levels: [EducationLevel.SeniorSecondary], description: "Coding and querying databases." },
+    { topic: "System Development", icon: "GitBranch", levels: [EducationLevel.SeniorSecondary], description: "The software development life cycle (SDLC)." },
+    { topic: "Computer Project", icon: "FolderGit", levels: [EducationLevel.SeniorSecondary], description: "Practical application and project work." },
+    { topic: "Types of computer systems", icon: "MonitorSmartphone", levels: [EducationLevel.SeniorSecondary], description: "Mainframes, PCs, and embedded systems." }
   ],
   [Subject.AgriculturalScience]: [
-    "General Agriculture", "Soil Science", "Crop Production", "Livestock Production", 
-    "Farm Machinery", "Farm Management"
+    // --- Junior Secondary Topics ---
+    { topic: "Agriculture in Zambia", icon: "Map", levels: [EducationLevel.JuniorSecondary], description: "Farming practices and importance in Zambia." },
+    { topic: "Soil Science", icon: "Layers", levels: [EducationLevel.JuniorSecondary], description: "Soil composition and fertility." },
+    { topic: "Crop Production", icon: "Wheat", levels: [EducationLevel.JuniorSecondary], description: "Growing crops and vegetables." },
+    { topic: "Forestry", icon: "Trees", levels: [EducationLevel.JuniorSecondary], description: "Managing forests and trees." },
+    { topic: "Conservation Farming", icon: "Leaf", levels: [EducationLevel.JuniorSecondary], description: "Sustainable farming methods." },
+    { topic: "Livestock Production", icon: "Milk", levels: [EducationLevel.JuniorSecondary], description: "Raising farm animals." },
+    { topic: "Farm Structure", icon: "Home", levels: [EducationLevel.JuniorSecondary], description: "Buildings and storage on the farm." },
+    { topic: "Farm Machinery", icon: "Tractor", levels: [EducationLevel.JuniorSecondary], description: "Using tractors and tools." },
+    { topic: "Farm Management", icon: "ClipboardCheck", levels: [EducationLevel.JuniorSecondary], description: "Running a farm business." },
+    { topic: "Project Work", icon: "FileText", levels: [EducationLevel.JuniorSecondary], description: "Practical agricultural projects." },
+
+    // --- Senior Secondary Topics ---
+    { topic: "Agriculture in Zambia", icon: "Map", levels: [EducationLevel.SeniorSecondary], description: "Advanced farming practices and economic importance." },
+    { topic: "Soil Science", icon: "Layers", levels: [EducationLevel.SeniorSecondary], description: "Soil chemistry, fertility, and erosion control." },
+    { topic: "Crop Production", icon: "Wheat", levels: [EducationLevel.SeniorSecondary], description: "Field crops, pest control, and harvesting." },
+    { topic: "Forestry", icon: "Trees", levels: [EducationLevel.SeniorSecondary], description: "Sustainable forestry and agroforestry." },
+    { topic: "Conservation Farming", icon: "Leaf", levels: [EducationLevel.SeniorSecondary], description: "Methods to preserve soil and water." },
+    { topic: "Livestock Production", icon: "Milk", levels: [EducationLevel.SeniorSecondary], description: "Breeding, nutrition, and disease control." },
+    { topic: "Farm Structures", icon: "Home", levels: [EducationLevel.SeniorSecondary], description: "Design and construction of farm buildings." },
+    { topic: "Farm Machinery", icon: "Tractor", levels: [EducationLevel.SeniorSecondary], description: "Operation and maintenance of machinery." },
+    { topic: "Farm Management", icon: "ClipboardCheck", levels: [EducationLevel.SeniorSecondary], description: "Farm accounts, budgeting, and marketing." }
   ],
   [Subject.Literature]: [
     // Theory & Fundamentals
-    "Literary Terms & Figures of Speech",
-    "Plot Structure & Narrative Techniques",
-    "Characterization & Role Analysis",
-    "Themes, Settings & Context",
-    "Poetry: Analysis of Unseen Poems",
-    "Poetry: Poetic Devices & Imagery",
-    "Set Books (Novels & Plays)" // The "Folder" entry
+    { topic: "Literary Terms & Figures of Speech", icon: "Quote", description: "Metaphors, similes, irony, and symbolism." },
+    { topic: "Plot Structure & Narrative Techniques", icon: "GitGraph", description: "Climax, conflict, and storytelling methods." },
+    { topic: "Characterization & Role Analysis", icon: "UserSearch", description: "Analyzing protagonists, antagonists, and foils." },
+    { topic: "Themes, Settings & Context", icon: "MapPin", description: "Social, historical context, and central ideas." },
+    { topic: "Poetry: Analysis of Unseen Poems", icon: "Feather", description: "Interpreting tone, mood, and meaning." },
+    { topic: "Poetry: Poetic Devices & Imagery", icon: "Image", description: "Rhythm, rhyme, and sensory language." },
+    { topic: "Set Books (Novels & Plays)", icon: "Library", description: "Deep dive into specific syllabus texts." }
   ],
   [Subject.AdditionalMathematics]: [
-    "Functions", "Quadratic Equations", "Indices & Surds", "Polynomials", 
-    "Simultaneous Equations", "Logarithms", "Coordinate Geometry", 
-    "Circular Measure", "Trigonometry", "Permutations & Combinations", 
-    "Calculus", "Kinematics"
+    { topic: "Coordinate Geometry", icon: "Axis3d", levels: [EducationLevel.SeniorSecondary], description: "Lines, circles, and geometric loci." },
+    { topic: "Systems of Equations", icon: "Copy", levels: [EducationLevel.SeniorSecondary], description: "Solving simultaneous linear/non-linear equations." },
+    { topic: "Functions", icon: "FunctionSquare", levels: [EducationLevel.SeniorSecondary], description: "Composite, inverse, and modulus functions." },
+    { topic: "Circular Measures", icon: "Circle", levels: [EducationLevel.SeniorSecondary], description: "Radians, arc length, and sector area." },
+    { topic: "Trigonometric Functions", icon: "Triangle", levels: [EducationLevel.SeniorSecondary], description: "Identities, equations, and graphs." },
+    { topic: "Permutations and Combinations", icon: "Shuffle", levels: [EducationLevel.SeniorSecondary], description: "Counting principles and arrangements." },
+    { topic: "Binomial Theorem", icon: "Sigma", levels: [EducationLevel.SeniorSecondary], description: "Expansion of powers of binomials." },
+    { topic: "Remainder and Factor Theorem", icon: "Divide", levels: [EducationLevel.SeniorSecondary], description: "Polynomial division and solving cubic equations." },
+    { topic: "Exponents and Logarithmic Functions", icon: "Superscript", levels: [EducationLevel.SeniorSecondary], description: "Log laws, exponential equations." },
+    { topic: "Arithmetic and Geometric Expressions", icon: "ListOrdered", levels: [EducationLevel.SeniorSecondary], description: "Sequences and series (AP & GP)." },
+    { topic: "Differentiation", icon: "TrendingUp", levels: [EducationLevel.SeniorSecondary], description: "Derivatives, gradients, and optimization." },
+    { topic: "Integration", icon: "AreaChart", levels: [EducationLevel.SeniorSecondary], description: "Area under curves and indefinite integrals." },
+    { topic: "Vectors in Two Dimension", icon: "MoveDiagonal", levels: [EducationLevel.SeniorSecondary], description: "Vector geometry and operations." },
+    { topic: "Statistics", icon: "BarChart3", levels: [EducationLevel.SeniorSecondary], description: "Mean, variance, and standard deviation." }
   ],
   [Subject.IntegratedScience]: [
-    "The Human Body", "Health & Disease", "The Environment", "Plants & Animals",
-    "Materials & Matter", "Energy & Forces", "Electricity & Magnetism", "The Solar System"
+    // Primary Level
+    { topic: "The Human Body", icon: "PersonStanding", levels: [EducationLevel.Primary], description: "External parts, senses, and personal care." },
+    { topic: "Health", icon: "HeartPulse", levels: [EducationLevel.Primary], description: "Hygiene, diseases, and healthy living." },
+    { topic: "The Environment", icon: "TreePine", levels: [EducationLevel.Primary], description: "Water, air, soil, and conservation." },
+    { topic: "Plants and Animals", icon: "Sprout", levels: [EducationLevel.Primary], description: "Living vs non-living, plants, and domestic/wild animals." },
+    { topic: "Materials and Energy", icon: "Zap", levels: [EducationLevel.Primary], description: "Matter, heat, light, sound, and electricity." },
+
+    // Junior Secondary Level
+    { topic: "The Human Body", icon: "PersonStanding", levels: [EducationLevel.JuniorSecondary], description: "Systems of the body: digestive, circulatory, respiratory, etc." },
+    { topic: "Health", icon: "Stethoscope", levels: [EducationLevel.JuniorSecondary], description: "Disease prevention, HIV/AIDS, immunity, and drug abuse." },
+    { topic: "The Environment", icon: "Globe", levels: [EducationLevel.JuniorSecondary], description: "Cycles in nature, pollution, and sustainable resource use." },
+    { topic: "Plants and Animals", icon: "PawPrint", levels: [EducationLevel.JuniorSecondary], description: "Photosynthesis, transport systems, and reproduction." },
+    { topic: "Materials and Energy", icon: "Atom", levels: [EducationLevel.JuniorSecondary], description: "Elements of matter, force, energy, and electricity." }
   ],
   [Subject.SocialStudies]: [
-    "Governance in Zambia", "Zambian History", "Physical Features of Zambia",
-    "Weather & Climate", "Population", "Economic Activities", "Civic Duties",
-    "Culture & Values", "Regional Cooperation"
+    // --- Junior Secondary Topics ---
+    { topic: "Man the Social Being", icon: "Users", levels: [EducationLevel.JuniorSecondary], description: "Socialization and human relationships." },
+    { topic: "Basic map Reading Techniques", icon: "Map", levels: [EducationLevel.JuniorSecondary], description: "Scales, grid references, and symbols." },
+    { topic: "Pre-colonial Societies in Zambia", icon: "Footprints", levels: [EducationLevel.JuniorSecondary], description: "Early kingdoms and migrations." },
+    { topic: "Man and the Environment", icon: "Trees", levels: [EducationLevel.JuniorSecondary], description: "Interaction with nature and resources." },
+    { topic: "Political Development in Zambia", icon: "Landmark", levels: [EducationLevel.JuniorSecondary], description: "Government history and changes." },
+    { topic: "Governance", icon: "Gavel", levels: [EducationLevel.JuniorSecondary], description: "Democracy, constitution, and citizenship." },
+    { topic: "Foreign Influence on Zambia", icon: "Globe", levels: [EducationLevel.JuniorSecondary], description: "Trade, missionaries, and colonialism." },
+    { topic: "Development in Zambia", icon: "TrendingUp", levels: [EducationLevel.JuniorSecondary], description: "Social and economic progress." },
+    { topic: "Economic Development", icon: "Coins", levels: [EducationLevel.JuniorSecondary], description: "Industries, trade, and money." },
+    { topic: "Regional and International Organisations", icon: "Flag", levels: [EducationLevel.JuniorSecondary], description: "SADC, COMESA, AU, and UN." },
+
+    // --- Primary Level Topics (Restricted) ---
+    { topic: "Living Together in the Community", icon: "Users", levels: [EducationLevel.Primary], description: "Community values, roles, and peaceful coexistence." },
+    { topic: "Direction and Location", icon: "Compass", levels: [EducationLevel.Primary], description: "Cardinal points, maps, and finding places." },
+    { topic: "Governance", icon: "Landmark", levels: [EducationLevel.Primary], description: "Leadership, rules, rights, and responsibilities." },
+    { topic: "Learning about Money", icon: "Coins", levels: [EducationLevel.Primary], description: "Currency, saving, spending, and trade." },
+    { topic: "Religion: Christian Living", icon: "BookHeart", levels: [EducationLevel.Primary], description: "Christian values, teachings, and daily life." },
+    { topic: "Festivals", icon: "Tent", levels: [EducationLevel.Primary], description: "Traditional, religious, and national celebrations." },
+    { topic: "Ceremonies", icon: "PartyPopper", levels: [EducationLevel.Primary], description: "Birth, initiation, marriage, and death rites." },
+    { topic: "Transport and Communication", icon: "Bus", levels: [EducationLevel.Primary], description: "Modes of transport and communication methods." },
+    { topic: "Weather and Climate", icon: "CloudSun", levels: [EducationLevel.Primary], description: "Elements of weather, seasons, and climate zones." },
+    { topic: "Environment", icon: "Trees", levels: [EducationLevel.Primary], description: "Natural resources, conservation, and pollution." },
+    { topic: "The World", icon: "Globe", levels: [EducationLevel.Primary], description: "Continents, oceans, and countries." },
+    { topic: "World Challenges", icon: "AlertTriangle", levels: [EducationLevel.Primary], description: "Global issues like poverty, disease, and conflict." },
+    { topic: "Farming", icon: "Tractor", levels: [EducationLevel.Primary], description: "Crops, livestock, and agricultural practices." },
+    { topic: "Entrepreneurship", icon: "Lightbulb", levels: [EducationLevel.Primary], description: "Business ideas, buying, and selling." }
   ],
   
   // New Subjects
   [Subject.CTS]: [
-    "Safety in Work Environment", "Tools and Equipment", "Materials", 
-    "Entrepreneurship", "Hygiene", "Technology in Daily Life", "Computer Basics", "Crafts"
+    { topic: "Safety and Health", icon: "ShieldAlert", description: "Workplace safety and first aid." },
+    { topic: "Tools and Equipment", icon: "Wrench", description: "Proper use and care of tools." },
+    { topic: "Fundamental Movement & Posture", icon: "PersonStanding", description: "Body mechanics and physical movement." },
+    { topic: "ICT Devices & Hardware", icon: "Monitor", description: "Computers and digital tools." },
+    { topic: "Software & Typing", icon: "Keyboard", description: "Using programs and typing skills." },
+    { topic: "Home Management & Hospitality", icon: "Home", description: "Managing a home and guests." },
+    { topic: "Materials", icon: "Box", description: "Properties of wood, metal, and plastic." },
+    { topic: "Drawing, Colouring & Lettering", icon: "Palette", description: "Artistic expression and design." },
+    { topic: "Patterns & Designing", icon: "Grid3X3", description: "Creating visual patterns." },
+    { topic: "Sound & Songs", icon: "Music", description: "Musical elements and singing." },
+    { topic: "Educational Gymnastics", icon: "Activity", description: "Physical exercises and agility." },
+    { topic: "Health and Fitness", icon: "HeartPulse", description: "Staying healthy and active." },
+    { topic: "Sports Skills Development", icon: "Trophy", description: "Basic skills in various sports." },
+    { topic: "Swimming", icon: "Waves", description: "Water safety and swimming strokes." },
+    { topic: "Crafts", icon: "Scissors", description: "Handmade items and creativity." },
+    { topic: "Energy", icon: "Zap", description: "Sources and uses of energy." },
+    { topic: "Food and Nutrition", icon: "Utensils", description: "Healthy eating habits." },
+    { topic: "Recreation", icon: "Sun", description: "Leisure activities and play." },
+    { topic: "Needle Work", icon: "PenTool", description: "Sewing basics." },
+    { topic: "Entrepreneurship", icon: "Lightbulb", description: "Basic business ideas." }
   ],
   [Subject.HomeEconomics]: [
-    "Personal Hygiene", "The Kitchen", "Food & Nutrition", "Textile & Clothing", 
-    "Home Management", "Consumer Education", "Needlework", "Laundry"
+    // --- Junior Secondary Topics ---
+    { topic: "Food and Nutrition", icon: "Carrot", levels: [EducationLevel.JuniorSecondary], description: "Nutrients, diet, digestion, and cooking methods." },
+    { topic: "Home Management", icon: "Home", levels: [EducationLevel.JuniorSecondary], description: "Hygiene, laundry, cleaning, and budgeting." },
+    { topic: "Health Education", icon: "HeartPulse", levels: [EducationLevel.JuniorSecondary], description: "Personal hygiene, safety, and first aid." },
+    { topic: "Needle Work and Crafts", icon: "Scissors", levels: [EducationLevel.JuniorSecondary], description: "Sewing, fabrics, and craft projects." },
+
+    // --- Primary Level Topics ---
+    { topic: "Measuring and Weighing", icon: "Scale", levels: [EducationLevel.Primary], description: "Using scales and measuring cups accurately." },
+    { topic: "Food", icon: "Carrot", levels: [EducationLevel.Primary], description: "Food groups and sources." },
+    { topic: "Cooking Methods", icon: "Flame", levels: [EducationLevel.Primary], description: "Boiling, frying, baking, and stewing." },
+    { topic: "Meal and Flour Mixtures", icon: "Wheat", levels: [EducationLevel.Primary], description: "Dough, batters, and baking basics." },
+    { topic: "Hospitality", icon: "CupSoda", levels: [EducationLevel.Primary], description: "Welcoming guests and etiquette." },
+    { topic: "The Kitchen", icon: "Refrigerator", levels: [EducationLevel.Primary], description: "Kitchen layout, equipment, and hygiene." },
+    { topic: "Home", icon: "Home", levels: [EducationLevel.Primary], description: "Types of homes and keeping them clean." },
+    { topic: "Laundry", icon: "Droplets", levels: [EducationLevel.Primary], description: "Washing, drying, and ironing clothes." },
+    { topic: "Human Development", icon: "Baby", levels: [EducationLevel.Primary], description: "Growth stages and care." },
+    { topic: "Hygiene & Puberty", icon: "Bath", levels: [EducationLevel.Primary], description: "Personal cleanliness and body changes." },
+    { topic: "Ventilation", icon: "Wind", levels: [EducationLevel.Primary], description: "Air flow and fresh air in the home." },
+    { topic: "Water and Sanitation", icon: "Droplet", levels: [EducationLevel.Primary], description: "Clean water sources and waste disposal." },
+    { topic: "Safety in the Home & School", icon: "ShieldCheck", levels: [EducationLevel.Primary], description: "Preventing accidents and first aid." },
+    { topic: "Needlework & Processes", icon: "Scissors", levels: [EducationLevel.Primary], description: "Stitches, seams, and simple projects." },
+    { topic: "Craft Work", icon: "Palette", levels: [EducationLevel.Primary], description: "Making useful items from materials." },
+    { topic: "Meal Planning", icon: "Calendar", levels: [EducationLevel.Primary], description: "Planning balanced meals for the day." },
+    { topic: "Leftover Foods", icon: "UtensilsCrossed", levels: [EducationLevel.Primary], description: "Storing and reheating food safely." },
+    { topic: "Food Preservation", icon: "Snowflake", levels: [EducationLevel.Primary], description: "Keeping food fresh for longer." },
+    { topic: "Pests", icon: "Bug", levels: [EducationLevel.Primary], description: "Common household pests and control." },
+    { topic: "Table Setting", icon: "Utensils", levels: [EducationLevel.Primary], description: "Laying the table for meals." },
+    { topic: "Gardening", icon: "Sprout", levels: [EducationLevel.Primary], description: "Growing vegetables and flowers." },
+    { topic: "Raising Agents", icon: "ArrowUpCircle", levels: [EducationLevel.Primary], description: "Yeast, baking powder, and air." },
+    { topic: "Time Management", icon: "Clock", levels: [EducationLevel.Primary], description: "Organizing daily tasks effectively." },
+    { topic: "Entrepreneurship", icon: "Briefcase", levels: [EducationLevel.Primary], description: "Starting small business ventures." },
+
+    // --- Senior Secondary Level Topics ---
+    { topic: "Personal Hygiene", icon: "Bath", levels: [EducationLevel.SeniorSecondary], description: "Grooming and personal care." },
+    { topic: "The Kitchen", icon: "Refrigerator", levels: [EducationLevel.SeniorSecondary], description: "Kitchen planning and safety." },
+    { topic: "Food & Nutrition", icon: "Carrot", levels: [EducationLevel.SeniorSecondary], description: "Nutrients, diet, and health." },
+    { topic: "Textile & Clothing", icon: "Shirt", levels: [EducationLevel.SeniorSecondary], description: "Fabrics, fibers, and clothing care." },
+    { topic: "Home Management", icon: "Home", levels: [EducationLevel.SeniorSecondary], description: "Budgeting and family resources." },
+    { topic: "Consumer Education", icon: "ShoppingBag", levels: [EducationLevel.SeniorSecondary], description: "Rights, responsibilities, and wise buying." },
+    { topic: "Needlework", icon: "PenTool", levels: [EducationLevel.SeniorSecondary], description: "Advanced sewing techniques." }, 
+    { topic: "Laundry", icon: "Droplets", levels: [EducationLevel.SeniorSecondary], description: "Fabric care and stain removal." }
   ],
   [Subject.BusinessStudies]: [
-    "The Office", "Office Equipment", "Communication", "Filing & Indexing", 
-    "Home & International Trade", "Money & Banking", "Entrepreneurship", "Transport"
+    { topic: "An Office", icon: "Armchair", levels: [EducationLevel.JuniorSecondary], description: "Functions and layout of an office." },
+    { topic: "Entrepreneurship", icon: "Lightbulb", levels: [EducationLevel.JuniorSecondary], description: "Starting and running a business." },
+    { topic: "Office Stationery and Equipment", icon: "Printer", levels: [EducationLevel.JuniorSecondary], description: "Tools and supplies used in office work." },
+    { topic: "Business Transactions", icon: "Receipt", levels: [EducationLevel.JuniorSecondary], description: "Buying and selling activities." },
+    { topic: "Books of Original Entry", icon: "Book", levels: [EducationLevel.JuniorSecondary], description: "Journals and day books." },
+    { topic: "Ledger", icon: "BookOpen", levels: [EducationLevel.JuniorSecondary], description: "Recording transactions in accounts." },
+    { topic: "Trial Balance", icon: "Scale", levels: [EducationLevel.JuniorSecondary], description: "Checking accuracy of accounts." },
+    { topic: "Final Accounts", icon: "FileSpreadsheet", levels: [EducationLevel.JuniorSecondary], description: "Trading, profit & loss accounts." },
+    { topic: "Wages and Salaries", icon: "Coins", levels: [EducationLevel.JuniorSecondary], description: "Payment methods and calculations." },
+    { topic: "Personal Financial Management", icon: "PiggyBank", levels: [EducationLevel.JuniorSecondary], description: "Budgeting and saving money." },
+    { topic: "Banking", icon: "Landmark", levels: [EducationLevel.JuniorSecondary], description: "Services offered by commercial banks." },
+    { topic: "Filing", icon: "FolderOpen", levels: [EducationLevel.JuniorSecondary], description: "Organizing and storing documents." },
+    { topic: "Post and Telecommunication Services", icon: "Phone", levels: [EducationLevel.JuniorSecondary], description: "Postal and communication systems." },
+    { topic: "Commonly Used Business Abbreviations", icon: "Type", levels: [EducationLevel.JuniorSecondary], description: "Short forms used in business." }
   ],
   [Subject.DesignAndTechnology]: [
-    "Health & Safety", "Tools", "Materials (Wood, Metal, Plastics)", 
-    "Graphic Communication", "Design Process", "Structures", "Mechanisms", "Electronics"
+    // Primary Topics
+    { topic: "Safety (Workroom & First Aid)", icon: "ShieldAlert", levels: [EducationLevel.Primary], description: "Safety rules and emergency procedures." },
+    { topic: "Tools (Storage, Bench, Marking)", icon: "Hammer", levels: [EducationLevel.Primary], description: "Identifying and using workshop tools." },
+    { topic: "Material Preparation & Joining", icon: "Construction", levels: [EducationLevel.Primary], description: "Cutting and connecting materials." },
+    { topic: "Building Materials", icon: "BrickWall", levels: [EducationLevel.Primary], description: "Types of materials for construction." },
+    { topic: "ICT: Window Manipulation & Programs", icon: "Monitor", levels: [EducationLevel.Primary], description: "Basic computer interface skills." },
+    { topic: "Lettering & Stencils", icon: "Type", levels: [EducationLevel.Primary], description: "Printing and font techniques." },
+    { topic: "Drawing (Angles, Shapes, Polygons)", icon: "DraftingCompass", levels: [EducationLevel.Primary], description: "Geometric construction." },
+    { topic: "Graphics & Design Elements", icon: "PenTool", levels: [EducationLevel.Primary], description: "Visual communication basics." },
+    { topic: "ICT: Saving & File Management", icon: "Save", levels: [EducationLevel.Primary], description: "Organizing digital files." },
+    { topic: "Inventions & Artifact Process", icon: "Lightbulb", levels: [EducationLevel.Primary], description: "History of technology and making things." },
+    { topic: "Energy (Safety, Circuits, Hydro)", icon: "Zap", levels: [EducationLevel.Primary], description: "Electrical basics and safety." },
+    { topic: "Entrepreneurship (Costing & Career)", icon: "Briefcase", levels: [EducationLevel.Primary], description: "Business skills and pricing." },
+    { topic: "ICT: Formatting & Editing Text", icon: "FileText", levels: [EducationLevel.Primary], description: "Word processing skills." },
+    { topic: "Drawing (Isometric & Orthographic)", icon: "Box", levels: [EducationLevel.Primary], description: "3D and projection drawing." },
+    { topic: "ICT: Internet & Research", icon: "Globe", levels: [EducationLevel.Primary], description: "Online information gathering." },
+    { topic: "ICT: Calculator Use", icon: "Calculator", levels: [EducationLevel.Primary], description: "Using digital calculators." },
+
+    // Junior Secondary Topics
+    { topic: "Safety", icon: "ShieldAlert", levels: [EducationLevel.JuniorSecondary], description: "Workshop safety and regulations." },
+    { topic: "Graphic Communication", icon: "PenTool", levels: [EducationLevel.JuniorSecondary], description: "Drawing techniques and visual communication." },
+    { topic: "Design and Communication", icon: "ClipboardList", levels: [EducationLevel.JuniorSecondary], description: "The design process and communicating ideas." },
+    { topic: "Resistant Materials", icon: "Hammer", levels: [EducationLevel.JuniorSecondary], description: "Working with wood, metal, and plastics." },
+    { topic: "Systems Technology", icon: "Settings", levels: [EducationLevel.JuniorSecondary], description: "Structures, mechanisms, and basic electronics." },
+    { topic: "Entrepreneurship", icon: "Lightbulb", levels: [EducationLevel.JuniorSecondary], description: "Business concepts in design." },
+
+    // Senior Secondary Topics (Restricted)
+    { topic: "Safety", icon: "ShieldAlert", levels: [EducationLevel.SeniorSecondary], description: "Workshop safety rules and regulations." },
+    { topic: "Materials", icon: "Layers", levels: [EducationLevel.SeniorSecondary], description: "Properties and uses of wood, metal, and plastics." },
+    { topic: "Cutting and Joining Materials", icon: "Wrench", levels: [EducationLevel.SeniorSecondary], description: "Tools and methods for shaping and assembling." },
+    { topic: "Graphic Communication", icon: "PenTool", levels: [EducationLevel.SeniorSecondary], description: "Technical drawing and visual communication." },
+    { topic: "Technology", icon: "Cpu", levels: [EducationLevel.SeniorSecondary], description: "Application of scientific knowledge in design." },
+    { topic: "Entrepreneurship", icon: "Lightbulb", levels: [EducationLevel.SeniorSecondary], description: "Business concepts in manufacturing and design." }, 
+    { topic: "Designing", icon: "DraftingCompass", levels: [EducationLevel.SeniorSecondary], description: "The design process and problem solving." },
+    { topic: "Finishing Processes", icon: "Brush", levels: [EducationLevel.SeniorSecondary], description: "Surface treatments and finishes." },
+    { topic: "Principles of Projection", icon: "Box", levels: [EducationLevel.SeniorSecondary], description: "Orthographic and isometric projections." }
   ],
   [Subject.ArtAndDesign]: [
-    "Elements of Art", "Principles of Design", "Drawing & Painting", 
-    "Graphic Design", "Lettering", "Fabric Design/Printing", "3D Construction", "Art History"
+    // Junior Secondary Topics
+    { topic: "Introduction to Art", icon: "BookOpen", levels: [EducationLevel.JuniorSecondary], description: "Basics and appreciation of art." },
+    { topic: "Drawing and Painting", icon: "Brush", levels: [EducationLevel.JuniorSecondary], description: "Media, techniques, and observation." },
+    { topic: "Pattern Making", icon: "Grid3X3", levels: [EducationLevel.JuniorSecondary], description: "Repeated designs and motifs." },
+    { topic: "Constructional Crafts", icon: "Hammer", levels: [EducationLevel.JuniorSecondary], description: "3D forms using various materials." },
+    { topic: "Lettering and Poster Work", icon: "Type", levels: [EducationLevel.JuniorSecondary], description: "Visual communication and layout." },
+    { topic: "Entrepreneurship in Art and Design", icon: "Briefcase", levels: [EducationLevel.JuniorSecondary], description: "Business skills for artists." },
+
+    // Senior Secondary Topics
+    { topic: "History of Zambian Art", icon: "Scroll", levels: [EducationLevel.SeniorSecondary], description: "Traditional and contemporary Zambian art." },
+    { topic: "Design on Paper", icon: "PenTool", levels: [EducationLevel.SeniorSecondary], description: "Graphic design, layouts, and patterns." },
+    { topic: "Crafts", icon: "Scissors", levels: [EducationLevel.SeniorSecondary], description: "Weaving, pottery, and constructional crafts." },
+    { topic: "Drawing or Painting from Observation", icon: "Eye", levels: [EducationLevel.SeniorSecondary], description: "Visual study of objects and nature." },
+    { topic: "Still Life", icon: "Apple", levels: [EducationLevel.SeniorSecondary], description: "Drawing arrangements of inanimate objects." },
+    { topic: "Drawing and Painting from a Living Person", icon: "User", levels: [EducationLevel.SeniorSecondary], description: "Portraiture and figure drawing." },
+    { topic: "Imaginative Composition in Colour", icon: "Palette", levels: [EducationLevel.SeniorSecondary], description: "Creative expression using color." },
+    { topic: "African Art History", icon: "Globe", levels: [EducationLevel.SeniorSecondary], description: "Artistic traditions across Africa." },
+    { topic: "World Art History", icon: "Landmark", levels: [EducationLevel.SeniorSecondary], description: "Major global art movements." },
+    { topic: "Entrepreneurship", icon: "Briefcase", levels: [EducationLevel.SeniorSecondary], description: "Marketing and selling art." }
   ],
   [Subject.ZambianLanguages]: [
-    "Comprehension", "Summary Writing", "Composition (Essay)", 
-    "Translation", "Structure (Grammar)", "Proverbs & Idioms", "Culture & Tradition"
+    { topic: "Comprehension", icon: "BookOpen", description: "Reading and understanding texts." },
+    { topic: "Summary Writing", icon: "FileText", levels: [EducationLevel.JuniorSecondary, EducationLevel.SeniorSecondary], description: "Summarizing passages." },
+    { topic: "Composition (Essay)", icon: "PenLine", description: "Creative and formal writing." },
+    { topic: "Translation", icon: "Languages", description: "Translating between languages." },
+    { topic: "Structure (Grammar)", icon: "Braces", description: "Language rules and usage." },
+    { topic: "Proverbs & Idioms", icon: "MessageCircle", description: "Traditional sayings and meanings." },
+    { topic: "Culture & Tradition", icon: "Tent", description: "Customs and heritage." }
   ],
   [Subject.French]: [
-    "Greetings & Introductions", "Family & Friends", "School & Education", 
-    "Hobbies & Leisure", "Travel & Transport", "Food & Drink", "Health & Environment",
-    "Grammar & Vocabulary", "Translation"
+    // --- Junior Secondary Topics ---
+    { topic: "Greetings", icon: "Hand", levels: [EducationLevel.JuniorSecondary], description: "Saying hello, goodbye, and formal greetings." },
+    { topic: "Identification", icon: "User", levels: [EducationLevel.JuniorSecondary], description: "Introducing oneself and others." },
+    { topic: "Possession", icon: "Lock", levels: [EducationLevel.JuniorSecondary], description: "Expressing ownership (mon, ma, mes)." },
+    { topic: "Colours", icon: "Palette", levels: [EducationLevel.JuniorSecondary], description: "Naming and agreeing colors." },
+    { topic: "Numeracy", icon: "Hash", levels: [EducationLevel.JuniorSecondary], description: "Numbers, counting, and prices." },
+    { topic: "Likes and Dislikes", icon: "ThumbsUp", levels: [EducationLevel.JuniorSecondary], description: "Expressing preferences (J'aime, Je déteste)." },
+    { topic: "Localisation", icon: "MapPin", levels: [EducationLevel.JuniorSecondary], description: "Describing where things are (sur, sous, devant)." },
+    { topic: "Distance and Location", icon: "Ruler", levels: [EducationLevel.JuniorSecondary], description: "Asking for directions and distance." },
+    { topic: "Accommodation", icon: "Home", levels: [EducationLevel.JuniorSecondary], description: "Describing houses and rooms." },
+    { topic: "Family Relationships", icon: "Users", levels: [EducationLevel.JuniorSecondary], description: "Family members and relationships." },
+    { topic: "Time", icon: "Clock", levels: [EducationLevel.JuniorSecondary], description: "Telling time and daily schedules." },
+    { topic: "Weather", icon: "CloudSun", levels: [EducationLevel.JuniorSecondary], description: "Describing weather conditions." },
+    { topic: "Permission/Prohibition", icon: "ShieldAlert", levels: [EducationLevel.JuniorSecondary], description: "Asking permission and rules (Il faut, Il est interdit)." },
+    { topic: "Possibility and Impossibility", icon: "HelpCircle", levels: [EducationLevel.JuniorSecondary], description: "Expressing what is possible (Je peux)." },
+    { topic: "Hobbies", icon: "Gamepad2", levels: [EducationLevel.JuniorSecondary], description: "Sports, music, and leisure activities." },
+    { topic: "Communication", icon: "MessageCircle", levels: [EducationLevel.JuniorSecondary], description: "Telephone and simple messages." },
+    { topic: "Hotels and Restaurants", icon: "Utensils", levels: [EducationLevel.JuniorSecondary], description: "Booking rooms and ordering food." },
+    { topic: "Post Office", icon: "Mail", levels: [EducationLevel.JuniorSecondary], description: "Sending letters and parcels." },
+    { topic: "Hospital", icon: "Stethoscope", levels: [EducationLevel.JuniorSecondary], description: "Describing illness and body parts." },
+    { topic: "Transport", icon: "Bus", levels: [EducationLevel.JuniorSecondary], description: "Taking the bus, train, or taxi." },
+    { topic: "Immigration and Customs", icon: "FileText", levels: [EducationLevel.JuniorSecondary], description: "Passport control and travel documents." },
+    { topic: "Translation (English to French)", icon: "Languages", levels: [EducationLevel.JuniorSecondary], description: "Translating simple sentences into French." },
+    { topic: "Translation (French to English)", icon: "Languages", levels: [EducationLevel.JuniorSecondary], description: "Translating simple sentences into English." },
+
+    // --- Senior Secondary Topics ---
+    { topic: "Greetings & Introductions", icon: "Hand", levels: [EducationLevel.SeniorSecondary], description: "Advanced social interactions." },
+    { topic: "Family & Friends", icon: "Users", levels: [EducationLevel.SeniorSecondary], description: "Describing relationships in detail." },
+    { topic: "School & Education", icon: "GraduationCap", levels: [EducationLevel.SeniorSecondary], description: "Classroom vocabulary and subjects." },
+    { topic: "Hobbies & Leisure", icon: "Gamepad2", levels: [EducationLevel.SeniorSecondary], description: "Sports and free time activities." },
+    { topic: "Travel & Transport", icon: "Plane", levels: [EducationLevel.SeniorSecondary], description: "Directions and transport modes." },
+    { topic: "Food & Drink", icon: "Utensils", levels: [EducationLevel.SeniorSecondary], description: "Ordering and describing food." },
+    { topic: "Health & Environment", icon: "HeartPulse", levels: [EducationLevel.SeniorSecondary], description: "Body parts and nature." },
+    { topic: "Grammar & Vocabulary", icon: "BookA", levels: [EducationLevel.SeniorSecondary], description: "Verb conjugation and words." },
+    { topic: "Translation (English to French)", icon: "Languages", levels: [EducationLevel.SeniorSecondary], description: "Advanced translation into French." },
+    { topic: "Translation (French to English)", icon: "Languages", levels: [EducationLevel.SeniorSecondary], description: "Advanced translation into English." }
+  ],
+  [Subject.Chinese]: [
+    { topic: "Greetings (问候 - Wènhòu)", icon: "Hand", levels: [EducationLevel.SeniorSecondary], description: "Basic greetings, self-introduction, and polite phrases." },
+    { topic: "Family (家庭 - Jiātíng)", icon: "Users", levels: [EducationLevel.SeniorSecondary], description: "Family members, occupations, and relationships." },
+    { topic: "Numbers & Dates (数字与日期 - Shùzì yǔ Rìqī)", icon: "Hash", levels: [EducationLevel.SeniorSecondary], description: "Counting, birthdays, days of the week, and months." },
+    { topic: "Time & Routine (时间 - Shíjiān)", icon: "Clock", levels: [EducationLevel.SeniorSecondary], description: "Telling time and describing daily activities." },
+    { topic: "Food & Drink (饮食 - Yǐnshí)", icon: "Utensils", levels: [EducationLevel.SeniorSecondary], description: "Ordering food, Chinese cuisine, and dining etiquette." },
+    { topic: "Hobbies & Sports (爱好 - Àihào)", icon: "Activity", levels: [EducationLevel.SeniorSecondary], description: "Likes, dislikes, and recreational activities." },
+    { topic: "School (学校 - Xuéxiào)", icon: "GraduationCap", levels: [EducationLevel.SeniorSecondary], description: "School subjects, facilities, and classroom language." },
+    { topic: "Transport (交通 - Jiāotōng)", icon: "Bus", levels: [EducationLevel.SeniorSecondary], description: "Asking for directions, modes of transport, and holiday plans." },
+    { topic: "Weather (天气 - Tiānqì)", icon: "CloudSun", levels: [EducationLevel.SeniorSecondary], description: "Describing weather conditions and seasons." },
+    { topic: "Shopping (购物 - Gòuwù)", icon: "ShoppingBag", levels: [EducationLevel.SeniorSecondary], description: "Buying items, colors, sizes, and bargaining." },
+    { topic: "Health (健康 - Jiànkāng)", icon: "HeartPulse", levels: [EducationLevel.SeniorSecondary], description: "Body parts, seeing a doctor, and illness." },
+    { topic: "Countries (国家 - Guójiā)", icon: "Globe", levels: [EducationLevel.SeniorSecondary], description: "Nationalities and languages spoken." },
+    { topic: "Translation (English to Chinese) (英译汉 - Yīng yì Hàn)", icon: "Languages", levels: [EducationLevel.SeniorSecondary], description: "Translating sentences from English to Chinese." },
+    { topic: "Translation (Chinese to English) (汉译英 - Hàn yì Yīng)", icon: "Languages", levels: [EducationLevel.SeniorSecondary], description: "Translating sentences from Chinese to English." }
   ],
   [Subject.FoodAndNutrition]: [
-    "Nutrients & Functions", "Diet & Meal Planning", "Digestion & Absorption", 
-    "Cooking Methods", "Flour Mixtures", "Sauces", "Food Preservation", 
-    "Kitchen Hygiene", "Consumer Studies"
+    { topic: "Nutrients & Functions", icon: "Apple", description: "Carbohydrates, proteins, and fats." },
+    { topic: "Diet & Meal Planning", icon: "CalendarDays", description: "Balanced diets for different groups." },
+    { topic: "Digestion & Absorption", icon: "Activity", description: "The digestive process." },
+    { topic: "Cooking Methods", icon: "Flame", description: "Heat transfer and cooking techniques." },
+    { topic: "Flour Mixtures", icon: "Wheat", description: "Cakes, breads, and pastries." },
+    { topic: "Sauces", icon: "Soup", description: "Types and uses of sauces." },
+    { topic: "Food Preservation", icon: "Snowflake", description: "Canning, freezing, and drying." },
+    { topic: "Kitchen Hygiene", icon: "Sparkles", description: "Food safety and cleanliness." },
+    { topic: "Consumer Studies", icon: "ShoppingCart", description: "Shopping and food labels." }
+  ],
+  [Subject.Music]: [
+    { topic: "Musical Skills and Development", icon: "Mic2", levels: [EducationLevel.JuniorSecondary], description: "Aural training and performance techniques." },
+    { topic: "Rhythm", icon: "Activity", levels: [EducationLevel.JuniorSecondary], description: "Duration, beat, meter, and tempo." },
+    { topic: "Melody", icon: "Music", levels: [EducationLevel.JuniorSecondary], description: "Pitch, scales, and intervals." },
+    { topic: "Harmony", icon: "Layers", levels: [EducationLevel.JuniorSecondary], description: "Chords, progressions, and texture." },
+    { topic: "Timbre (Tone Colour)", icon: "Speaker", levels: [EducationLevel.JuniorSecondary], description: "Sound quality of instruments and voices." },
+    { topic: "Style", icon: "Star", levels: [EducationLevel.JuniorSecondary], description: "Historical periods and genres." },
+    { topic: "Form", icon: "Layout", levels: [EducationLevel.JuniorSecondary], description: "Structure of musical compositions." }
+  ],
+  [Subject.MusicalArtsEducation]: [
+    { topic: "Musical Skills and Development", icon: "Mic2", levels: [EducationLevel.SeniorSecondary], description: "Advanced aural and performance skills." },
+    { topic: "Rhythm", icon: "Activity", levels: [EducationLevel.SeniorSecondary], description: "Complex rhythmic patterns and meters." },
+    { topic: "Melody", icon: "Music", levels: [EducationLevel.SeniorSecondary], description: "Modes, scales, and melodic construction." },
+    { topic: "Harmony", icon: "Layers", levels: [EducationLevel.SeniorSecondary], description: "Extended chords and harmonic analysis." },
+    { topic: "Timbre (Tone Colour)", icon: "Speaker", levels: [EducationLevel.SeniorSecondary], description: "Orchestration and sound design." },
+    { topic: "Style & History", icon: "Star", levels: [EducationLevel.SeniorSecondary], description: "In-depth study of musical eras and traditions." },
+    { topic: "Form & Analysis", icon: "Layout", levels: [EducationLevel.SeniorSecondary], description: "Analyzing large-scale musical structures." },
+    { topic: "Composition", icon: "PenTool", levels: [EducationLevel.SeniorSecondary], description: "Creating original musical works." }
+  ],
+  [Subject.PhysicalEducation]: [
+    { topic: "Perceptual Motor Learning", icon: "Brain", levels: [EducationLevel.JuniorSecondary], description: "Motor skills and coordination development." },
+    { topic: "Movement", icon: "Move", levels: [EducationLevel.JuniorSecondary], description: "Locomotor and non-locomotor movements." },
+    { topic: "Gymnastics", icon: "Activity", levels: [EducationLevel.JuniorSecondary], description: "Agility, balance, and coordination exercises." },
+    { topic: "Physical Education and Health", icon: "HeartPulse", levels: [EducationLevel.JuniorSecondary], description: "Relationship between physical activity and health." },
+    { topic: "Recreational and Traditional Games", icon: "Gamepad2", levels: [EducationLevel.JuniorSecondary], description: "Indigenous games and leisure activities." },
+    { topic: "Combative Activities", icon: "Swords", levels: [EducationLevel.JuniorSecondary], description: "Wrestling and self-defense basics." },
+    { topic: "Swimming", icon: "Waves", levels: [EducationLevel.JuniorSecondary], description: "Water safety and swimming techniques." },
+    { topic: "Sports Activities", icon: "Trophy", levels: [EducationLevel.JuniorSecondary], description: "Team and individual sports rules and skills." },
+    { topic: "Fitness Activities", icon: "Dumbbell", levels: [EducationLevel.JuniorSecondary], description: "Aerobic and anaerobic exercises." },
+    { topic: "Orienteering", icon: "Compass", levels: [EducationLevel.JuniorSecondary], description: "Navigation and outdoor skills." },
+    { topic: "Entrepreneurship in Sports", icon: "Briefcase", levels: [EducationLevel.JuniorSecondary], description: "Professionalism and careers in sports." }
   ],
 
   // Special Papers (Primary)
   [Subject.SpecialPaper1]: [
-    "Verbal Reasoning", "Letter Series", "Analogies", "Odd One Out",
-    "Word Formation", "Sentence Completion", "Coding and Decoding", "Logical Deduction"
+    { topic: "Verbal Reasoning", icon: "Speech", description: "Word logic and reasoning." },
+    { topic: "Letter Series", icon: "ListOrdered", description: "Sequences of letters." },
+    { topic: "Analogies", icon: "GitMerge", description: "Relationships between words." },
+    { topic: "Odd One Out", icon: "SearchX", description: "Identifying the different item." },
+    { topic: "Word Formation", icon: "Blocks", description: "Creating words from letters." },
+    { topic: "Sentence Completion", icon: "MoreHorizontal", description: "Filling in missing words." },
+    { topic: "Coding and Decoding", icon: "Code", description: "Deciphering codes." },
+    { topic: "Logical Deduction", icon: "BrainCircuit", description: "Inferring facts from statements." }
   ],
   [Subject.SpecialPaper2]: [
-    "Non-Verbal Reasoning", "Pattern Completion", "Figure Matrices", "Mirror Images",
-    "Shape Construction", "Spatial Visualization", "Series Completion", "Geometric Shapes"
+    { topic: "Non-Verbal Reasoning", icon: "Eye", description: "Visual logic and patterns." },
+    { topic: "Pattern Completion", icon: "Puzzle", description: "Completing visual designs." },
+    { topic: "Figure Matrices", icon: "Grid2X2", description: "Solving grid-based puzzles." },
+    { topic: "Mirror Images", icon: "FlipHorizontal", description: "Reflections of shapes." },
+    { topic: "Shape Construction", icon: "Shapes", description: "Combining shapes." },
+    { topic: "Spatial Visualization", icon: "Box", description: "Mental rotation of objects." },
+    { topic: "Series Completion", icon: "ArrowRightCircle", description: "Next shape in sequence." },
+    { topic: "Geometric Shapes", icon: "Triangle", description: "Properties of shapes." }
   ]
 };

@@ -1,19 +1,23 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Question, Subject } from '../types';
-import { generateTTS } from '../services/geminiService';
-import { CheckCircle, XCircle, ArrowRight, Timer, Clock, Volume2, VolumeX, Loader2 } from 'lucide-react';
+import { CheckCircle, XCircle, ArrowRight, Timer, Clock } from 'lucide-react';
 
 interface QuizInterfaceProps {
   subject: Subject;
   questions: Question[];
   onComplete: (answers: { questionId: number; selectedIndex: number }[]) => void;
   onCancel: () => void;
+  initialProgress?: {
+    currentQuestionIndex: number;
+    answers: { questionId: number; selectedIndex: number }[];
+    questionTimeLeft?: number;
+  };
 }
 
-const QuizInterface: React.FC<QuizInterfaceProps> = ({ subject, questions, onComplete, onCancel }) => {
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+const QuizInterface: React.FC<QuizInterfaceProps> = ({ subject, questions, onComplete, onCancel, initialProgress }) => {
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(initialProgress?.currentQuestionIndex || 0);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
-  const [answers, setAnswers] = useState<{ questionId: number; selectedIndex: number }[]>([]);
+  const [answers, setAnswers] = useState<{ questionId: number; selectedIndex: number }[]>(initialProgress?.answers || []);
   const [showFeedback, setShowFeedback] = useState(false);
   
   // Timer State
@@ -21,49 +25,45 @@ const QuizInterface: React.FC<QuizInterfaceProps> = ({ subject, questions, onCom
   const [totalQuestionTime, setTotalQuestionTime] = useState(0);
   const [isTimerActive, setIsTimerActive] = useState(true);
 
-  // TTS State
-  const [ttsEnabled, setTtsEnabled] = useState(false);
-  const [isPlayingAudio, setIsPlayingAudio] = useState(false);
-  const [isLoadingAudio, setIsLoadingAudio] = useState(false);
-  const audioContextRef = useRef<AudioContext | null>(null);
-  const audioSourceRef = useRef<AudioBufferSourceNode | null>(null);
-
   // Audio Context for Ticking Sound
   const tickAudioCtxRef = useRef<AudioContext | null>(null);
+
+  // Ref to track if this is the initial mount for resume logic
+  const isFirstRender = useRef(true);
 
   const currentQuestion = questions[currentQuestionIndex];
   const isLastQuestion = currentQuestionIndex === questions.length - 1;
 
   // Calculate dynamic time based on question length
   const calculateTimeForQuestion = (question: Question) => {
-    const textLength = question.text.length;
     const wordCount = question.text.split(' ').length;
     
-    // Base time of 30 seconds + 1.5 second per word
-    // Math subjects usually need more calculation time
-    let calculatedTime = 30 + Math.ceil(wordCount * 1.5);
+    // Increased base time to 60 seconds + 2.5 seconds per word
+    // This provides significantly more time for reading and calculation
+    let calculatedTime = 60 + Math.ceil(wordCount * 2.5);
+
+    // Check for numbers in the question text (indicating potential calculations)
+    // Add 30 seconds extra if digits are present
+    if (/\d/.test(question.text)) {
+        calculatedTime += 30;
+    }
 
     // Adjust for options length too
     const optionsLength = question.options.join(' ').length;
-    calculatedTime += Math.ceil(optionsLength / 10);
+    calculatedTime += Math.ceil(optionsLength / 8);
 
-    // Minimum 45 seconds, Maximum 300 seconds (5 minutes)
-    return Math.max(45, Math.min(300, calculatedTime));
+    // Minimum 60 seconds, Maximum 900 seconds (15 minutes)
+    return Math.max(60, Math.min(900, calculatedTime));
   };
 
   // Helper for rendering math superscripts (e.g. 2^3 -> 2³) and subscripts (H_2O -> H₂O)
   const formatText = (text: string) => {
     if (!text) return "";
-    // Regex matches ^ or _ followed by:
-    // 1. (parentheses group)
-    // 2. {curly braces group}
-    // 3. or alphanumeric sequence (including negative numbers like -5)
     const parts = text.split(/([_^](?:\([^)]+\)|\{[^}]+\}|-?\d+|[a-zA-Z0-9]+))/g);
     
     return parts.map((part, index) => {
       if (part.startsWith('^')) {
         let content = part.substring(1);
-        // Strip outer parens/braces if present
         if ((content.startsWith('(') && content.endsWith(')')) || 
             (content.startsWith('{') && content.endsWith('}'))) {
           content = content.substring(1, content.length - 1);
@@ -72,37 +72,59 @@ const QuizInterface: React.FC<QuizInterfaceProps> = ({ subject, questions, onCom
       }
       if (part.startsWith('_')) {
         let content = part.substring(1);
-        // Strip outer parens/braces if present
         if ((content.startsWith('(') && content.endsWith(')')) || 
             (content.startsWith('{') && content.endsWith('}'))) {
           content = content.substring(1, content.length - 1);
         }
         return <sub key={index} className="text-xs align-sub font-semibold">{content}</sub>;
       }
-      // Render normal text
       return <span key={index}>{part}</span>;
     });
   };
 
+  // --- LocalStorage Save Logic ---
+  useEffect(() => {
+    // Save current progress to localStorage whenever key state changes
+    const sessionData = {
+        subject,
+        questions, // Saving questions ensures we resume the exact same quiz
+        currentQuestionIndex,
+        answers,
+        questionTimeLeft,
+        timestamp: Date.now()
+    };
+    localStorage.setItem('zot_quiz_session', JSON.stringify(sessionData));
+  }, [subject, questions, currentQuestionIndex, answers, questionTimeLeft]);
+
+  const clearSession = () => {
+      localStorage.removeItem('zot_quiz_session');
+  };
+
+  // --- End LocalStorage Logic ---
+
   // Reset timer when question changes
   useEffect(() => {
     if (currentQuestion) {
-      const time = calculateTimeForQuestion(currentQuestion);
-      setTotalQuestionTime(time);
-      setQuestionTimeLeft(time);
-      setIsTimerActive(true);
+      // If resuming and this is the first render, use the saved time
+      if (isFirstRender.current && initialProgress && initialProgress.questionTimeLeft !== undefined) {
+         const calculatedTotal = calculateTimeForQuestion(currentQuestion);
+         setTotalQuestionTime(calculatedTotal);
+         setQuestionTimeLeft(initialProgress.questionTimeLeft);
+         setIsTimerActive(true);
+         isFirstRender.current = false;
+      } else {
+         // Normal flow
+         const time = calculateTimeForQuestion(currentQuestion);
+         setTotalQuestionTime(time);
+         setQuestionTimeLeft(time);
+         setIsTimerActive(true);
+      }
     }
-  }, [currentQuestionIndex, currentQuestion]);
+  }, [currentQuestionIndex, currentQuestion, initialProgress]);
 
-  // Cleanup TTS audio on unmount
+  // Cleanup Audio on unmount
   useEffect(() => {
     return () => {
-      if (audioSourceRef.current) {
-        audioSourceRef.current.stop();
-      }
-      if (audioContextRef.current) {
-        audioContextRef.current.close();
-      }
       if (tickAudioCtxRef.current && tickAudioCtxRef.current.state !== 'closed') {
         tickAudioCtxRef.current.close();
       }
@@ -148,18 +170,14 @@ const QuizInterface: React.FC<QuizInterfaceProps> = ({ subject, questions, onCom
       const isCritical = questionTimeLeft <= 5;
       
       if (isCritical) {
-        // Critical Phase (5s - 1s): Sharper tone, rising pitch, louder volume
-        osc.type = 'triangle'; // Sharper than sine
-        // Pitch rises as time decreases: 1000Hz -> 1400Hz
+        osc.type = 'triangle'; 
         const pitch = 1000 + ((6 - questionTimeLeft) * 100); 
         osc.frequency.setValueAtTime(pitch, ctx.currentTime);
         
-        // Volume ramps up significantly: 0.2 -> 0.8
         const volume = 0.2 + ((5 - questionTimeLeft) * 0.15);
         gain.gain.setValueAtTime(volume, ctx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
       } else {
-        // Warning Phase (10s - 6s): Softer "woodblock" click
         osc.type = 'sine';
         osc.frequency.setValueAtTime(800, ctx.currentTime);
         gain.gain.setValueAtTime(0.15, ctx.currentTime);
@@ -174,7 +192,6 @@ const QuizInterface: React.FC<QuizInterfaceProps> = ({ subject, questions, onCom
   // Sound Effects for Answer Feedback
   useEffect(() => {
     if (showFeedback) {
-        // Use a temporary context for immediate feedback sound
         const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
         const ctx = new AudioContextClass();
         
@@ -187,114 +204,30 @@ const QuizInterface: React.FC<QuizInterfaceProps> = ({ subject, questions, onCom
         const isCorrect = selectedOption === currentQuestion.correctAnswerIndex;
         
         if (isCorrect) {
-            // CORRECT: Loud High Pitch Chime
             osc.type = 'sine'; 
-            // Start high (1500Hz) and go higher (2500Hz) to sound like a "ding!"
             osc.frequency.setValueAtTime(1500, ctx.currentTime);
             osc.frequency.exponentialRampToValueAtTime(2500, ctx.currentTime + 0.1);
-            
-            // High Volume (0.8)
             gain.gain.setValueAtTime(0, ctx.currentTime);
             gain.gain.linearRampToValueAtTime(0.8, ctx.currentTime + 0.05); 
             gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
-            
             osc.start(ctx.currentTime);
             osc.stop(ctx.currentTime + 0.5);
         } else {
-            // WRONG: Loud Distinct Buzzer
-            osc.type = 'sawtooth'; // Sawtooth cuts through mix better
-            // Start mid-low (400Hz) and drop (150Hz)
+            osc.type = 'sawtooth'; 
             osc.frequency.setValueAtTime(400, ctx.currentTime);
             osc.frequency.linearRampToValueAtTime(150, ctx.currentTime + 0.3);
-            
-            // High Volume (0.8)
             gain.gain.setValueAtTime(0, ctx.currentTime);
             gain.gain.linearRampToValueAtTime(0.8, ctx.currentTime + 0.05);
             gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
-            
             osc.start(ctx.currentTime);
             osc.stop(ctx.currentTime + 0.4);
         }
         
-        // Cleanup context shortly after
         setTimeout(() => {
             if(ctx.state !== 'closed') ctx.close();
         }, 600);
     }
   }, [showFeedback, selectedOption, currentQuestion]);
-
-  // Helper to decode base64 audio
-  const decodeAudio = (base64String: string): Uint8Array => {
-      const binaryString = atob(base64String);
-      const bytes = new Uint8Array(binaryString.length);
-      for (let i = 0; i < binaryString.length; i++) {
-          bytes[i] = binaryString.charCodeAt(i);
-      }
-      return bytes;
-  };
-
-  // TTS Logic using Gemini API
-  useEffect(() => {
-    const playTTS = async () => {
-       if (!ttsEnabled || showFeedback || !isTimerActive || !currentQuestion) {
-           // Stop any playing audio
-           if (audioSourceRef.current) {
-               try { audioSourceRef.current.stop(); } catch (e) {}
-           }
-           setIsPlayingAudio(false);
-           return;
-       }
-
-       setIsLoadingAudio(true);
-       // TTS text should be plain for better reading
-       const textToRead = `Question ${currentQuestionIndex + 1}. ${currentQuestion.text}. Option A. ${currentQuestion.options[0]}. Option B. ${currentQuestion.options[1]}. Option C. ${currentQuestion.options[2]}. Option D. ${currentQuestion.options[3]}.`;
-
-       const base64Audio = await generateTTS(textToRead);
-       setIsLoadingAudio(false);
-
-       if (base64Audio) {
-           if (!audioContextRef.current) {
-               audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
-           }
-           const ctx = audioContextRef.current;
-           
-           const audioBytes = decodeAudio(base64Audio);
-           
-           try {
-               const dataInt16 = new Int16Array(audioBytes.buffer);
-               const buffer = ctx.createBuffer(1, dataInt16.length, 24000);
-               const channelData = buffer.getChannelData(0);
-               for(let i=0; i<dataInt16.length; i++) {
-                   channelData[i] = dataInt16[i] / 32768.0;
-               }
-
-               const source = ctx.createBufferSource();
-               source.buffer = buffer;
-               source.connect(ctx.destination);
-               source.onended = () => setIsPlayingAudio(false);
-               
-               audioSourceRef.current = source;
-               source.start();
-               setIsPlayingAudio(true);
-
-           } catch (e) {
-               console.error("Audio playback failed", e);
-           }
-       }
-    };
-
-    playTTS();
-
-    return () => {
-        if (audioSourceRef.current) {
-            try { audioSourceRef.current.stop(); } catch (e) {}
-        }
-    };
-  }, [currentQuestionIndex, ttsEnabled, currentQuestion]); // Re-run when question changes
-
-  const toggleTts = () => {
-    setTtsEnabled(!ttsEnabled);
-  };
 
   const handleTimeout = () => {
     setIsTimerActive(false);
@@ -336,6 +269,7 @@ const QuizInterface: React.FC<QuizInterfaceProps> = ({ subject, questions, onCom
         const newAnswers = [...answers, { questionId: currentQuestion.id, selectedIndex: finalSelection }];
         setAnswers(newAnswers);
         if (isLastQuestion) {
+             clearSession(); // Clear storage
              onComplete(newAnswers);
              return;
         }
@@ -351,6 +285,7 @@ const QuizInterface: React.FC<QuizInterfaceProps> = ({ subject, questions, onCom
         setAnswers(newAnswers);
 
         if (isLastQuestion) {
+          clearSession(); // Clear storage
           onComplete(newAnswers);
         } else {
           setCurrentQuestionIndex(prev => prev + 1);
@@ -360,29 +295,25 @@ const QuizInterface: React.FC<QuizInterfaceProps> = ({ subject, questions, onCom
     }
   };
 
+  const handleQuit = () => {
+      clearSession(); // Clear storage
+      onCancel();
+  };
+
   return (
     <div className="max-w-3xl mx-auto w-full">
       {/* Header */}
       <div className="flex justify-between items-start mb-6 bg-white p-4 rounded-xl shadow-sm border border-gray-100">
         <div>
-          <h2 className="text-xl font-bold text-gray-800 mb-1">{subject} Quiz</h2>
+          <div className="flex items-center gap-2">
+            <h2 className="text-xl font-bold text-gray-800 mb-1">{subject} Quiz</h2>
+            {initialProgress && isFirstRender.current && <span className="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full">Resumed</span>}
+          </div>
           <p className="text-sm text-gray-500">Question {currentQuestionIndex + 1} of {questions.length}</p>
         </div>
         
         <div className="flex flex-col items-end gap-2">
           <div className="flex items-center gap-3">
-            {/* TTS Toggle */}
-            <button 
-              onClick={toggleTts}
-              className={`p-2 rounded-lg border transition-all duration-200 flex items-center gap-2 ${ttsEnabled ? 'bg-green-100 border-green-300 text-green-700' : 'bg-gray-50 border-gray-200 text-gray-400 hover:bg-gray-100'}`}
-              title={ttsEnabled ? "Turn off AI Reader" : "Turn on AI Reader"}
-            >
-              {isLoadingAudio ? <Loader2 className="w-5 h-5 animate-spin" /> : 
-               ttsEnabled ? <Volume2 className={`w-5 h-5 ${isPlayingAudio ? 'animate-pulse' : ''}`} /> : <VolumeX className="w-5 h-5" />
-              }
-              <span className="text-xs font-semibold hidden sm:inline">{ttsEnabled ? 'Reader ON' : 'Reader OFF'}</span>
-            </button>
-
             {/* Timer */}
             <div className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-all duration-300 ${getTimerColor()}`}>
               <Clock className="w-5 h-5" />
@@ -390,7 +321,7 @@ const QuizInterface: React.FC<QuizInterfaceProps> = ({ subject, questions, onCom
             </div>
           </div>
           
-          <button onClick={onCancel} className="text-xs text-gray-400 hover:text-red-500 underline pr-1">
+          <button onClick={handleQuit} className="text-xs text-gray-400 hover:text-red-500 underline pr-1">
             Quit Quiz
           </button>
         </div>

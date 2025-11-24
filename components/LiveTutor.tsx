@@ -1,14 +1,14 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { getGenAIClient } from '../services/geminiService';
-import { LiveServerMessage, Modality, Blob } from '@google/genai';
+import { LiveServerMessage, Modality, Blob, FunctionDeclaration } from '@google/genai';
 import { Mic, MicOff, X, Loader2, Volume2, BrainCircuit, AlertCircle, Clock } from 'lucide-react';
 
 interface LiveTutorProps {
   onClose: () => void;
+  selectedVoice: string;
 }
 
-const LiveTutor: React.FC<LiveTutorProps> = ({ onClose }) => {
+const LiveTutor: React.FC<LiveTutorProps> = ({ onClose, selectedVoice }) => {
   const [connected, setConnected] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [status, setStatus] = useState<string>('Initializing...');
@@ -75,37 +75,49 @@ const LiveTutor: React.FC<LiveTutorProps> = ({ onClose }) => {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       streamRef.current = stream;
       
-      setStatus('Connecting to Gemini Live...');
+      setStatus('Connecting to Live Tutor...');
       const ai = getGenAIClient();
 
       // Setup Audio Contexts
       inputAudioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 16000 });
       outputAudioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 24000 });
       
+      const endSessionTool: FunctionDeclaration = {
+        name: "endSession",
+        description: "Ends the quiz session. Call this function immediately after providing the final summary and saying goodbye."
+      };
+
       // Connect to Live API
       const sessionPromise = ai.live.connect({
         model: 'gemini-2.5-flash-native-audio-preview-09-2025',
         config: {
+          tools: [{ functionDeclarations: [endSessionTool] }],
           responseModalities: [Modality.AUDIO],
           speechConfig: {
-            voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Zephyr' } },
+            voiceConfig: { prebuiltVoiceConfig: { voiceName: selectedVoice } },
           },
-          systemInstruction: `You are the ZOT AI Quiz Master, an oral examiner for the Zambian ECZ syllabus.
+          systemInstruction: `You are the ZOT Virtual Quiz Master, an oral examiner for the Zambian ECZ syllabus.
           
-          Your goal is to conduct a real-time oral quiz.
+          Your goal is to conduct a short real-time oral quiz consisting of EXACTLY 5 QUESTIONS.
           
           PROTOCOL:
           1. Start by enthusiastically welcoming the user to the "ZOT Live Quiz".
           2. ASK the user for their Education Level (Primary, Junior Secondary, or Senior Secondary). Wait for their response.
           3. Once the level is established, ASK for the Subject they wish to attempt. Wait for response.
           4. ASK for a specific Topic (or they can choose 'General'). Wait for response.
-          5. BEGIN THE QUIZ:
+          5. BEGIN THE QUIZ (Limit to 5 Questions):
              - Ask ONE multiple-choice question at a time based on the agreed Level, Subject, and Topic.
              - Read the Question and Options A, B, C, D clearly.
              - Wait for the user to speak their answer.
              - Evaluate the answer. Tell them if they are "Correct" or "Incorrect".
              - If incorrect, provide a very brief (1 sentence) explanation of the right answer.
-             - Immediately ask the next question.
+             - Track the number of questions asked.
+             - After the answer to question 5 is evaluated, DO NOT ask another question.
+          
+          6. END SESSION:
+             - After the 5th question is completed, provide a summary of their performance (e.g., "You got 3 out of 5 correct").
+             - Give a final encouraging remark and say "Goodbye".
+             - IMMEDIATELY call the 'endSession' tool to close the connection.
           
           Keep the pace fast and energetic. Do not lecture. Focus on testing knowledge.`
         },
@@ -123,6 +135,15 @@ const LiveTutor: React.FC<LiveTutorProps> = ({ onClose }) => {
               playAudioResponse(base64Audio);
             }
 
+            // Handle Tool Calls (e.g., endSession)
+            if (message.toolCall?.functionCalls?.some(fc => fc.name === 'endSession')) {
+                setStatus('Quiz Complete. Ending session...');
+                // Wait for the Goodbye audio to likely finish (e.g. 5 seconds) before closing
+                setTimeout(() => {
+                    onClose();
+                }, 5000);
+            }
+
             // Handle Interruptions
             if (message.serverContent?.interrupted) {
                stopAllAudio();
@@ -133,7 +154,7 @@ const LiveTutor: React.FC<LiveTutorProps> = ({ onClose }) => {
             setConnected(false);
           },
           onerror: (e) => {
-            console.error("Live API Error", e);
+            console.error("Live Service Error", e);
             setStatus('Connection Error');
           }
         }
@@ -386,8 +407,8 @@ const LiveTutor: React.FC<LiveTutorProps> = ({ onClose }) => {
        
        <div className="mt-10 text-gray-400 text-sm max-w-lg text-center space-y-2 bg-gray-900/50 p-4 rounded-xl border border-gray-800">
            <p>1. Say "Hello" to start the session.</p>
-           <p>2. Tell the AI your <span className="text-green-400 font-bold">Level</span>, <span className="text-green-400 font-bold">Subject</span>, and <span className="text-green-400 font-bold">Topic</span>.</p>
-           <p>3. Speak your answers clearly!</p>
+           <p>2. Tell the Tutor your <span className="text-green-400 font-bold">Level</span>, <span className="text-green-400 font-bold">Subject</span>, and <span className="text-green-400 font-bold">Topic</span>.</p>
+           <p>3. Speak your answers clearly! (5 Questions total)</p>
        </div>
     </div>
   );

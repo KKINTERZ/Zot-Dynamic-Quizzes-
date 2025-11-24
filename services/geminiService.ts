@@ -1,5 +1,6 @@
+
 import { GoogleGenAI, Type, Modality } from "@google/genai";
-import { Subject, Question, EducationLevel } from "../types";
+import { Subject, Question, EducationLevel, Difficulty } from "../types";
 import { LITERATURE_BOOKS } from "../data/subjectTopics";
 
 // Initialize the client. API_KEY is injected by the environment.
@@ -26,9 +27,10 @@ const getECZGradeContext = (level: EducationLevel): string => {
 export const generateQuiz = async (
   subject: Subject, 
   level: EducationLevel,
-  questionCount: number, 
+  questionCount: number | 'Auto', 
   customContext?: string,
-  topic?: string
+  topic?: string,
+  difficulty: Difficulty = 'Auto'
 ): Promise<Question[]> => {
   
   // Determine if we are targeting a specific Literature Book
@@ -41,8 +43,15 @@ export const generateQuiz = async (
   
   const eczContext = getECZGradeContext(level);
 
+  let quantityInstruction = "";
+  if (questionCount === 'Auto') {
+      quantityInstruction = "consisting of a random but appropriate number of questions (between 15 and 50) to sufficiently test the topic";
+  } else {
+      quantityInstruction = `consisting of exactly ${questionCount} questions`;
+  }
+
   let prompt = `You are an expert examiner for the Examinations Council of Zambia (ECZ). 
-  Generate a multiple-choice quiz consisting of exactly ${questionCount} questions for the subject: ${subject}.
+  Generate a multiple-choice quiz ${quantityInstruction} for the subject: ${subject}.
   The target audience is students at the ${eczContext}.
   The questions should accurately reflect the style, format, vocabulary, and difficulty of typical ECZ past papers for this specific grade level.
 
@@ -52,17 +61,53 @@ export const generateQuiz = async (
   - Do not use LaTeX formatting like $x^2$. Use simple text with ^ and _ markers.
   `;
 
+  // Difficulty Logic
+  let difficultyInstruction = "";
+  switch(difficulty) {
+      case 'Simple':
+          difficultyInstruction = "The questions should be relatively easy, focusing on basic definitions, recall, and fundamental concepts.";
+          break;
+      case 'Medium':
+          difficultyInstruction = "The questions should be of moderate difficulty, requiring application of concepts and standard problem solving.";
+          break;
+      case 'Difficulty':
+          difficultyInstruction = "The questions should be challenging, requiring critical thinking, complex problem solving, and deep understanding of the subject matter.";
+          break;
+      case 'Mixed':
+          difficultyInstruction = "Create a balanced mix of questions: 30% Simple, 40% Medium, and 30% Difficult/Challenging.";
+          break;
+      case 'Auto':
+      default:
+          difficultyInstruction = "The difficulty should match the standard distribution found in actual ECZ final exams for this grade level.";
+          break;
+  }
+  prompt += `\n\nDIFFICULTY SETTING: ${difficultyInstruction}`;
+
+  // Add Specific Language Instruction for Chinese
+  if (subject === Subject.Chinese) {
+      prompt += `\n\nLANGUAGE INSTRUCTION: For EVERY Chinese character or phrase used in the questions, options, or explanations, you MUST provide the Pinyin pronunciation immediately following it in parentheses.
+      Example Format: "你好 (Nǐ hǎo)" or "北京 (Běijīng)".
+      Ensure the Pinyin includes correct tone marks.`;
+  }
+
   if (customContext) {
-    prompt += `\n\nUse the following text from a study document or past paper as the PRIMARY source for these questions:\n"${customContext}"\n`;
+    prompt += `\n\nUse the following provided text as the PRIMARY source material. 
+    If the text appears to be a summary of a book (e.g., 'Quills of Desire'), digital notes, or a past paper, base ALL questions strictly on the information provided in this text and your internal knowledge of the specific subject context implied by it.
+    
+    --- CUSTOM CONTEXT START ---
+    "${customContext}"
+    --- CUSTOM CONTEXT END ---
+    \n`;
   } else if (topic && topic !== "General / All Topics") {
     if (isLiteratureBook) {
         prompt += `\n\nCRITICAL INSTRUCTION: You are generating questions for the specific literary text: "${topic}". 
         
         DEEP RESEARCH & THINKING MODE ENGAGED:
-        1. RECALL the exact plot, characters (protagonists, antagonists, minor characters), settings, and key themes of "${topic}".
-        2. VERIFY every question and answer against the actual events of the book/play.
-        3. Ensure character names are spelled correctly and their relationships are accurate.
-        4. Avoid hallucinations. If a specific event did not happen in the book, do not include it.
+        1. Access your comprehensive internal knowledge base regarding the book/play "${topic}".
+        2. RECALL the exact plot, characters (protagonists, antagonists, minor characters), settings, and key themes.
+        3. VERIFY every question and answer against the actual events of the book/play.
+        4. Ensure character names are spelled correctly and their relationships are accurate.
+        5. Avoid hallucinations. If a specific event did not happen in the book, do not include it.
         
         The questions should test specific knowledge of the text, not just general summaries.
         Focus strictly on: "${topic}".`;
@@ -183,7 +228,7 @@ export const getDeepExplanation = async (
  * FEATURE: Generate speech (TTS)
  * Uses gemini-2.5-flash-preview-tts
  */
-export const generateTTS = async (text: string): Promise<string | null> => {
+export const generateTTS = async (text: string, voiceName: string = 'Kore'): Promise<string | null> => {
     try {
         // Strip formatting characters for TTS so it reads naturally
         const cleanText = text.replace(/[\^_]/g, " ");
@@ -195,7 +240,7 @@ export const generateTTS = async (text: string): Promise<string | null> => {
                 responseModalities: [Modality.AUDIO],
                 speechConfig: {
                     voiceConfig: {
-                        prebuiltVoiceConfig: { voiceName: 'Kore' },
+                        prebuiltVoiceConfig: { voiceName: voiceName },
                     },
                 },
             },
@@ -223,7 +268,9 @@ export const getSubjectTrends = async (subject: string): Promise<string> => {
             }
         });
         
-        return response.text || "No trends found.";
+        let text = response.text || "No trends found.";
+        // Clean up markdown characters (hashes and stars)
+        return text.replace(/[#*]/g, '');
     } catch (e) {
         console.error("Search grounding error:", e);
         return "Could not retrieve exam trends at this moment.";

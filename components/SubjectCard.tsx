@@ -6,7 +6,7 @@ import {
   Landmark, Map, BookHeart, TrendingUp, BarChart3, Monitor,
   Sprout, Feather, Sigma, Microscope, Users, Wrench, ChefHat,
   Briefcase, DraftingCompass, Palette, MessageCircle, UtensilsCrossed,
-  Brain, Grid3X3
+  Brain, Grid3X3, Music, Activity, Languages
 } from 'lucide-react';
 
 interface SubjectCardProps {
@@ -44,8 +44,12 @@ const SubjectCard: React.FC<SubjectCardProps> = ({ subject, onClick }) => {
       case Subject.DesignAndTechnology: return <DraftingCompass className="w-8 h-8 text-slate-700" />;
       case Subject.ArtAndDesign: return <Palette className="w-8 h-8 text-fuchsia-500" />;
       case Subject.ZambianLanguages: return <MessageCircle className="w-8 h-8 text-amber-600" />;
-      case Subject.French: return <Globe className="w-8 h-8 text-blue-400" />; // Reusing Globe or generic
+      case Subject.French: return <Globe className="w-8 h-8 text-blue-400" />; 
+      case Subject.Chinese: return <Languages className="w-8 h-8 text-red-600" />;
       case Subject.FoodAndNutrition: return <UtensilsCrossed className="w-8 h-8 text-red-400" />;
+      case Subject.Music: return <Music className="w-8 h-8 text-pink-600" />;
+      case Subject.MusicalArtsEducation: return <Music className="w-8 h-8 text-violet-600" />;
+      case Subject.PhysicalEducation: return <Activity className="w-8 h-8 text-blue-600" />;
 
       case Subject.SpecialPaper1: return <Brain className="w-8 h-8 text-violet-600" />;
       case Subject.SpecialPaper2: return <Grid3X3 className="w-8 h-8 text-cyan-600" />;
@@ -83,7 +87,11 @@ const SubjectCard: React.FC<SubjectCardProps> = ({ subject, onClick }) => {
       case Subject.ArtAndDesign: return "Visual Arts, Crafts & Graphic Design";
       case Subject.ZambianLanguages: return "Local Languages Comprehension & Grammar";
       case Subject.French: return "Language Structure, Vocabulary & Translation";
+      case Subject.Chinese: return "Mandarin grammar, vocabulary & culture";
       case Subject.FoodAndNutrition: return "Diet, Cooking, Preservation & Health";
+      case Subject.Music: return "Rhythm, Melody, Harmony & Performance";
+      case Subject.MusicalArtsEducation: return "Performance, Composition & Analysis";
+      case Subject.PhysicalEducation: return "Fitness, Sports Skills & Health";
 
       case Subject.SpecialPaper1: return "Verbal Reasoning & English Aptitude";
       case Subject.SpecialPaper2: return "Non-Verbal Reasoning & Patterns";
@@ -95,13 +103,13 @@ const SubjectCard: React.FC<SubjectCardProps> = ({ subject, onClick }) => {
   return (
     <button
       onClick={() => onClick(subject)}
-      className="flex flex-col items-start p-6 bg-white rounded-xl shadow-sm hover:shadow-md border border-gray-100 transition-all hover:border-green-400 hover:-translate-y-1 w-full text-left group"
+      className="flex flex-col items-start p-6 bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md border border-gray-100 dark:border-gray-700 transition-all hover:border-green-400 dark:hover:border-green-500 hover:-translate-y-1 w-full text-left group"
     >
-      <div className="p-3 bg-gray-50 rounded-lg mb-4 group-hover:bg-green-50 transition-colors">
+      <div className="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg mb-4 group-hover:bg-green-50 dark:group-hover:bg-green-900/30 transition-colors">
         {getIcon()}
       </div>
-      <h3 className="text-lg font-bold text-gray-900 mb-1">{subject}</h3>
-      <p className="text-sm text-gray-500">{getDescription()}</p>
+      <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1">{subject}</h3>
+      <p className="text-sm text-gray-500 dark:text-gray-400">{getDescription()}</p>
     </button>
   );
 };

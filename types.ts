@@ -1,4 +1,3 @@
-
 export enum Subject {
   Mathematics = 'Mathematics',
   English = 'English Language',
@@ -26,7 +25,11 @@ export enum Subject {
   ArtAndDesign = 'Art & Design',
   ZambianLanguages = 'Zambian Languages',
   French = 'French',
+  Chinese = 'Chinese',
   FoodAndNutrition = 'Food & Nutrition',
+  Music = 'Music',
+  MusicalArtsEducation = 'Musical Arts Education',
+  PhysicalEducation = 'Physical Education',
   
   // Primary Special Papers
   SpecialPaper1 = 'Special Paper 1',
@@ -38,6 +41,8 @@ export enum EducationLevel {
   JuniorSecondary = 'Junior Secondary',
   SeniorSecondary = 'Senior Secondary'
 }
+
+export type Difficulty = 'Simple' | 'Medium' | 'Difficulty' | 'Mixed' | 'Auto';
 
 export interface Question {
   id: number;
@@ -53,10 +58,29 @@ export interface QuizResult {
   answers: { questionId: number; selectedIndex: number }[];
 }
 
-export type AppState = 'SELECTION' | 'TOPIC_SELECTION' | 'LOADING' | 'QUIZ' | 'RESULTS' | 'ERROR' | 'LIVE_TUTOR';
+export type AppState = 'SELECTION' | 'TOPIC_SELECTION' | 'CONFIG' | 'LOADING' | 'QUIZ' | 'RESULTS' | 'ERROR' | 'LIVE_TUTOR' | 'ABOUT' | 'HELP' | 'HISTORY';
 
 export interface QuizConfig {
   subject: Subject;
   level: EducationLevel;
+  difficulty: Difficulty;
   customContext?: string; // For pasting text from past papers
+}
+
+export interface QuizHistoryItem {
+  id: string;
+  timestamp: number;
+  subject: Subject;
+  topic: string;
+  level: EducationLevel;
+  difficulty: Difficulty;
+  score: number;
+  totalQuestions: number;
+  questions: Question[];
+  answers: { questionId: number; selectedIndex: number }[];
+}
+
+export interface ChatMessage {
+  role: 'user' | 'model';
+  text: string;
 }
