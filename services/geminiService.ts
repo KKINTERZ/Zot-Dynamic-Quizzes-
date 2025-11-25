@@ -21,6 +21,37 @@ const getECZGradeContext = (level: EducationLevel): string => {
 };
 
 /**
+ * Helper function to generate an illustration for a question.
+ * Uses gemini-2.5-flash-image to create educational diagrams.
+ */
+const generateIllustration = async (prompt: string): Promise<string | undefined> => {
+    try {
+        const response = await ai.models.generateContent({
+            model: 'gemini-2.5-flash-image',
+            contents: {
+                parts: [{ text: `Create a clear, simple, educational diagram or illustration on a white background for the following concept: ${prompt}. Do not include any text labels inside the image.` }]
+            },
+            config: {
+                imageConfig: {
+                    aspectRatio: "16:9",
+                }
+            }
+        });
+
+        if (response.candidates?.[0]?.content?.parts) {
+            for (const part of response.candidates[0].content.parts) {
+                if (part.inlineData) {
+                    return `data:${part.inlineData.mimeType};base64,${part.inlineData.data}`;
+                }
+            }
+        }
+    } catch (e) {
+        console.warn("Failed to generate illustration for prompt:", prompt, e);
+    }
+    return undefined;
+};
+
+/**
  * Generates a quiz based on the subject, level, question count, optional custom context, and specific topic.
  * Uses gemini-2.5-flash for standard quizzes, and gemini-3-pro-preview for high-accuracy literature books.
  */
@@ -53,12 +84,37 @@ export const generateQuiz = async (
   let prompt = `You are an expert examiner for the Examinations Council of Zambia (ECZ). 
   Generate a multiple-choice quiz ${quantityInstruction} for the subject: ${subject}.
   The target audience is students at the ${eczContext}.
+  
+  RESOURCE INTEGRATION INSTRUCTION:
+  To ensure the questions are highly dynamic, authentic, and reflective of the actual ECZ exam standard, you must synthesize question styles, formats, and topics found in the following key Zambian educational resources and similar platforms:
+  - zedpastpapers.com
+  - chatgpt.com
+  - eskulu.com
+  - https://eczstudytool.com/download-science-ecz-pastpapers
+  - https://eczstudytool.com/ecz-science-topics-for-exams
+  - https://eczsolutions.com/
+  - https://eczstudytool.com/ecz-mathematics-topics-for-exams
+  - https://eczsolutions.com/grade-12.html
+  - https://eczstudytool.com/ecz-chemistry-topics-for-exams
+  - https://eczpastpapers.com/grade-12-ecz-past-papers/
+  - https://eczpastpapers.com/grade-9-ecz-past-papers/
+  - https://eczpastpapers.com/grade-7-ecz-past-papers/
+  - https://eczpastpapers.com/
+  - https://zambianecz.org/
+  - google.com
+
   The questions should accurately reflect the style, format, vocabulary, and difficulty of typical ECZ past papers for this specific grade level.
 
   FORMATTING INSTRUCTIONS:
   - For mathematical exponents or powers, use the caret symbol ^ (e.g., write 2 to the power of 3 as 2^3, x squared as x^2).
   - For chemical formulas or subscripts, use the underscore symbol _ (e.g., write H2O as H_2O, CO2 as CO_2).
   - Do not use LaTeX formatting like $x^2$. Use simple text with ^ and _ markers.
+
+  VISUAL AIDS:
+  If a question would benefit significantly from a visual diagram (e.g. geometry shapes, circuit diagrams, biological structures, chemical setups, geography maps), provide a clear, detailed visual description in the 'ip' (image_prompt) field.
+  The description should be suitable for an AI image generator to create a simple, clean, educational line drawing or diagram on a white background.
+  If no image is strictly necessary, omit the 'ip' field or leave it empty.
+  Do NOT ask for images containing text labels, as AI often misspells them. Describe the visual structure only.
   `;
 
   // Difficulty Logic
@@ -139,7 +195,8 @@ export const generateQuiz = async (
               a: { 
                 type: Type.INTEGER, 
               },
-              e: { type: Type.STRING }
+              e: { type: Type.STRING },
+              ip: { type: Type.STRING, description: "Visual description for diagram if needed, else empty" }
             },
             required: ["q", "o", "a", "e"]
           }
@@ -155,7 +212,7 @@ export const generateQuiz = async (
   }
 
   try {
-    // Using abbreviated keys (q, o, a, e) in the schema to minimize token usage 
+    // Using abbreviated keys (q, o, a, e, ip) in the schema to minimize token usage 
     const response = await ai.models.generateContent({
       model: modelName,
       contents: prompt,
@@ -166,14 +223,27 @@ export const generateQuiz = async (
       const data = JSON.parse(response.text);
       const questionsRaw = data.quiz_questions || [];
       
-      // Map the abbreviated schema back to our internal Question interface
-      return questionsRaw.map((q: any, idx: number) => ({
-        id: idx,
-        text: q.q,
-        options: q.o,
-        correctAnswerIndex: q.a,
-        explanation: q.e
+      // Process questions and generate images where needed (in parallel)
+      const processedQuestions = await Promise.all(questionsRaw.map(async (q: any, idx: number) => {
+          let imageUrl = undefined;
+          
+          // If the model provided an image prompt (ip) and it's not empty, generate an image
+          if (q.ip && typeof q.ip === 'string' && q.ip.trim().length > 5) {
+             imageUrl = await generateIllustration(q.ip);
+          }
+
+          return {
+            id: idx,
+            text: q.q,
+            options: q.o,
+            correctAnswerIndex: q.a,
+            explanation: q.e,
+            imagePrompt: q.ip,
+            imageUrl: imageUrl
+          };
       }));
+      
+      return processedQuestions;
     }
     
     throw new Error("No content generated");

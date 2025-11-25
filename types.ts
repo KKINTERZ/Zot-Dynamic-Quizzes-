@@ -1,3 +1,4 @@
+
 export enum Subject {
   Mathematics = 'Mathematics',
   English = 'English Language',
@@ -50,6 +51,8 @@ export interface Question {
   options: string[];
   correctAnswerIndex: number;
   explanation: string;
+  imagePrompt?: string;
+  imageUrl?: string;
 }
 
 export interface QuizResult {
@@ -58,7 +61,7 @@ export interface QuizResult {
   answers: { questionId: number; selectedIndex: number }[];
 }
 
-export type AppState = 'SELECTION' | 'TOPIC_SELECTION' | 'CONFIG' | 'LOADING' | 'QUIZ' | 'RESULTS' | 'ERROR' | 'LIVE_TUTOR' | 'ABOUT' | 'HELP' | 'HISTORY';
+export type AppState = 'SELECTION' | 'TOPIC_SELECTION' | 'CONFIG' | 'LOADING' | 'QUIZ' | 'RESULTS' | 'ERROR' | 'LIVE_TUTOR' | 'ABOUT' | 'HELP' | 'HISTORY' | 'CONTACT' | 'LEADERBOARD';
 
 export interface QuizConfig {
   subject: Subject;

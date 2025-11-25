@@ -8,6 +8,8 @@ import QuizInterface from './components/QuizInterface';
 import ResultsView from './components/ResultsView';
 import LiveTutor from './components/LiveTutor';
 import RealTimeClock from './components/RealTimeClock';
+import LeaderboardView from './components/LeaderboardView';
+import ScrollToTop from './components/ScrollToTop';
 import { SUBJECT_TOPICS, ZAMBIAN_LANGUAGES, LITERATURE_BOOKS, TopicDef } from './data/subjectTopics';
 import * as LucideIcons from 'lucide-react';
 import { 
@@ -16,8 +18,40 @@ import {
   Search, Loader2, BrainCircuit, MessageCircle, FolderOpen, Book, 
   PlayCircle, ChevronRight, X, Sun, Moon, ExternalLink, Settings, Target, Gauge,
   ListOrdered, Clock, Info, Code, Palette, Briefcase, Globe, HelpCircle, History,
-  Calendar, Trash2, RefreshCw, Send
+  Calendar, Trash2, RefreshCw, Send, Construction, Mail, Phone, Music, Trophy
 } from 'lucide-react';
+
+// --- Custom Social Media Icons (Authentic Brand Look) ---
+
+const TikTokIcon = ({ className }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="currentColor" height="1em" width="1em" className={className} xmlns="http://www.w3.org/2000/svg">
+    <path d="M19.589 6.686a4.793 4.793 0 0 1-3.77-4.245V2h-3.445v13.672a2.896 2.896 0 0 1-5.201 1.743l-.002-.001.002.001a2.895 2.895 0 0 1 3.183-4.51v-3.5a6.329 6.329 0 0 0-5.394 10.692 6.33 6.33 0 0 0 10.857-4.424V8.687a8.182 8.182 0 0 0 4.773 1.526V6.79a4.831 4.831 0 0 1-1.003-.104z"/>
+  </svg>
+);
+
+const FacebookIcon = ({ className }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="currentColor" height="1em" width="1em" className={className} xmlns="http://www.w3.org/2000/svg">
+    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+  </svg>
+);
+
+const YouTubeIcon = ({ className }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="currentColor" height="1em" width="1em" className={className} xmlns="http://www.w3.org/2000/svg">
+    <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+  </svg>
+);
+
+const InstagramIcon = ({ className }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="currentColor" height="1em" width="1em" className={className} xmlns="http://www.w3.org/2000/svg">
+    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+  </svg>
+);
+
+const WhatsAppIcon = ({ className }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="currentColor" height="1em" width="1em" className={className} xmlns="http://www.w3.org/2000/svg">
+    <path d="M.057 24l1.687-6.163c-1.041-1.807-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
+  </svg>
+);
 
 // ... (rest of imports and helper functions remain the same) ...
 // Helper component to render icon dynamically from string name
@@ -149,6 +183,9 @@ export const App: React.FC = () => {
   const [isChatLoading, setIsChatLoading] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
+
+  // Development Banner State
+  const [showDevBanner, setShowDevBanner] = useState(true);
 
   // Scroll to bottom of chat
   useEffect(() => {
@@ -440,6 +477,13 @@ export const App: React.FC = () => {
     }
   };
 
+  const handleRetakeQuiz = () => {
+      setQuizAnswers([]);
+      setResumeData(null); 
+      localStorage.removeItem('zot_quiz_session');
+      setAppState('QUIZ');
+  };
+
   const handleQuestionCountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = parseInt(e.target.value);
     if (!isNaN(val)) {
@@ -491,41 +535,56 @@ export const App: React.FC = () => {
     switch (appState) {
       case 'SELECTION':
         return (
-          // ... (Existing SELECTION case content) ...
-          <div className="max-w-6xl mx-auto animate-fade-in">
-            <div className="text-center mb-12">
-               <div className="inline-flex items-center justify-center p-3 bg-green-600 rounded-xl mb-4 shadow-lg shadow-green-200 dark:shadow-none">
-                 <Zap className="w-8 h-8 text-white fill-current" />
-               </div>
-              <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">ZOT Dynamic Quizzes</h2>
-              <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-                Master your ECZ exams with intelligent dynamic quizzes. 
-                Choose your level and subject to get started.
-              </p>
-              
-              <div className="mt-6 flex justify-center gap-4 flex-wrap">
-                 <button 
-                    onClick={() => setAppState('LIVE_TUTOR')}
-                    className="inline-flex items-center px-6 py-3 bg-gray-900 dark:bg-gray-700 text-white rounded-full hover:bg-gray-800 dark:hover:bg-gray-600 transition-all shadow-lg hover:shadow-xl group"
-                 >
-                    <BrainCircuit className="w-5 h-5 mr-2 text-green-400 group-hover:animate-pulse" />
-                    Start Live Quiz Session
-                 </button>
+          <div className="max-w-6xl mx-auto animate-fade-in relative">
+            
+            {/* Decorative Image Top Left Overlay */}
+            <div className="absolute top-0 left-0 z-20 pointer-events-none">
+                 <img 
+                    src="https://iili.io/KD1y6CX.jpg" 
+                    alt="Decorative" 
+                    className="w-48 h-48 object-cover opacity-100 rounded-br-full" 
+                 />
+            </div>
 
-                 {resumeData && (
-                     <button 
-                        onClick={handleResumeQuiz}
-                        className="inline-flex items-center px-6 py-3 bg-blue-600 dark:bg-blue-700 text-white rounded-full hover:bg-blue-700 dark:hover:bg-blue-600 transition-all shadow-lg hover:shadow-xl animate-bounce-subtle"
-                     >
-                        <PlayCircle className="w-5 h-5 mr-2" />
-                        Resume {resumeData.subject} Quiz
-                     </button>
-                 )}
-              </div>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">Oral exam practice with Virtual Quiz Master</p>
+            {/* Hero Section - Clean background with transparency */}
+            <div className="relative mb-12 rounded-3xl overflow-hidden p-8 sm:p-12 text-center shadow-sm border border-gray-100 dark:border-gray-700 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm z-10">
+                
+                <div className="relative z-10 flex flex-col items-center">
+                    <div className="inline-flex items-center justify-center mb-4">
+                        <img src="https://iili.io/ffg5o5Q.png" alt="ZOT Logo" className="w-48 h-48 object-contain" />
+                    </div>
+                    <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">ZOT DYNAMIC QUIZZES</h2>
+                    <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto font-medium">
+                        Master your ECZ exams with intelligent dynamic quizzes. 
+                        Choose your level and subject to get started.
+                    </p>
+                    
+                    <div className="mt-6 flex justify-center gap-4 flex-wrap">
+                        <button 
+                            onClick={() => setAppState('LIVE_TUTOR')}
+                            className="inline-flex items-center px-6 py-3 bg-gray-900 dark:bg-gray-700 text-white rounded-full hover:bg-gray-800 dark:hover:bg-gray-600 transition-all shadow-lg hover:shadow-xl group"
+                            aria-label="Start Live Quiz Session with Voice Tutor"
+                        >
+                            <BrainCircuit className="w-5 h-5 mr-2 text-green-400 group-hover:animate-pulse" />
+                            Start Live Quiz Session
+                        </button>
+
+                        {resumeData && (
+                            <button 
+                                onClick={handleResumeQuiz}
+                                className="inline-flex items-center px-6 py-3 bg-blue-600 dark:bg-blue-700 text-white rounded-full hover:bg-blue-700 dark:hover:bg-blue-600 transition-all shadow-lg hover:shadow-xl animate-bounce-subtle"
+                                aria-label={`Resume ${resumeData.subject} Quiz`}
+                            >
+                                <PlayCircle className="w-5 h-5 mr-2" />
+                                Resume {resumeData.subject} Quiz
+                            </button>
+                        )}
+                    </div>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">Oral exam practice with Virtual Quiz Master</p>
+                </div>
             </div>
             
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 mb-6 max-w-3xl mx-auto">
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 mb-6 max-w-3xl mx-auto relative z-10">
                <div className="mb-0">
                    <div className="flex items-center gap-2 mb-3 justify-center">
                      <div className="p-1.5 bg-green-100 dark:bg-green-900/30 rounded-lg text-green-700 dark:text-green-400">
@@ -540,6 +599,8 @@ export const App: React.FC = () => {
                             key={lvl}
                             onClick={() => setSelectedLevel(lvl)}
                             className={`px-4 py-3 text-sm font-medium rounded-xl transition-all border text-center flex-1 ${selectedLevel === lvl ? 'bg-green-600 text-white border-green-600 shadow-md transform scale-105' : 'bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-300 border-gray-200 dark:border-gray-600 hover:border-green-400 hover:bg-green-50 dark:hover:bg-gray-600'}`}
+                            aria-label={`Select Level: ${lvl}`}
+                            aria-pressed={selectedLevel === lvl}
                          >
                             <span>{lvl}</span>
                          </button>
@@ -548,7 +609,7 @@ export const App: React.FC = () => {
                </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 relative z-10">
               {availableSubjects.map((subj) => (
                 <SubjectCard 
                   key={subj} 
@@ -559,7 +620,7 @@ export const App: React.FC = () => {
             </div>
             
             {availableSubjects.length === 0 && (
-               <div className="text-center py-12 text-gray-500 dark:text-gray-400 col-span-full">
+               <div className="text-center py-12 text-gray-500 dark:text-gray-400 col-span-full relative z-10">
                   No subjects configured for this level yet.
                </div>
             )}
@@ -574,12 +635,124 @@ export const App: React.FC = () => {
              />
          );
       
+      case 'LEADERBOARD':
+         return (
+            <LeaderboardView history={quizHistory} onHome={() => setAppState('SELECTION')} />
+         );
+
+      case 'CONTACT':
+        return (
+          <div className="max-w-5xl mx-auto animate-fade-in p-4 sm:p-0 pb-20">
+             <button
+                onClick={() => setAppState('SELECTION')}
+                className="flex items-center text-gray-500 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-400 font-medium mb-6 transition-colors"
+                aria-label="Back to Home"
+            >
+                <ArrowLeft className="w-5 h-5 mr-2" />
+                Back to Home
+            </button>
+
+            <div className="text-center mb-10">
+                <div className="inline-flex items-center justify-center p-4 bg-green-100 dark:bg-green-900/30 rounded-2xl mb-4 text-green-600 dark:text-green-400">
+                    <Mail className="w-10 h-10" />
+                </div>
+                <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Get in Touch</h2>
+                <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+                    Connect with us on social media or reach out directly for support and inquiries.
+                </p>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-8">
+                {/* ZOT SECTION */}
+                <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-md border border-gray-100 dark:border-gray-700 hover:border-green-400 dark:hover:border-green-600 transition-colors relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-24 h-24 bg-green-50 dark:bg-green-900/10 rounded-bl-full -mr-8 -mt-8"></div>
+                    <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
+                        <span className="text-green-600 font-extrabold tracking-tight">ZEDDY ONLINE TUITIONS</span>
+                    </h3>
+                    
+                    <div className="space-y-4 mb-8">
+                        <div className="flex items-center gap-3 text-gray-700 dark:text-gray-300">
+                            <FacebookIcon className="w-5 h-5 text-blue-600" />
+                            <span>Search: <strong className="text-gray-900 dark:text-white">Zeddy Online Tuitions</strong></span>
+                        </div>
+                        <div className="flex items-center gap-3 text-gray-700 dark:text-gray-300">
+                            <YouTubeIcon className="w-5 h-5 text-red-600" />
+                            <span>Search: <strong className="text-gray-900 dark:text-white">Zeddy Online Tuitions</strong></span>
+                        </div>
+                        <div className="flex items-center gap-3 text-gray-700 dark:text-gray-300">
+                            <TikTokIcon className="w-5 h-5 text-black dark:text-white" />
+                            <span>Search: <strong className="text-gray-900 dark:text-white">Zeddy Online Tuitions</strong></span>
+                        </div>
+                    </div>
+
+                    <div className="border-t border-gray-100 dark:border-gray-700 pt-6 space-y-4">
+                        <a href="mailto:zot@alldmw.uk" className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-900/50 hover:bg-green-50 dark:hover:bg-green-900/20 transition-colors group">
+                            <Mail className="w-5 h-5 text-gray-500 group-hover:text-green-600" />
+                            <span className="font-medium text-gray-700 dark:text-gray-200">zot@alldmw.uk</span>
+                        </a>
+                        <a href="https://chat.whatsapp.com/E68GHptwxZ3JvrtopcRtgL" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-900/50 hover:bg-green-50 dark:hover:bg-green-900/20 transition-colors group">
+                            <WhatsAppIcon className="w-5 h-5 text-green-500" />
+                            <span className="font-medium text-gray-700 dark:text-gray-200">Join WhatsApp Group</span>
+                        </a>
+                        <a href="https://t.me/zeddyonlinetuitions" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-900/50 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors group">
+                            <Send className="w-5 h-5 text-blue-500" />
+                            <span className="font-medium text-gray-700 dark:text-gray-200">Join Telegram Channel</span>
+                        </a>
+                    </div>
+                </div>
+
+                {/* DMW SECTION */}
+                <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-md border border-gray-100 dark:border-gray-700 hover:border-yellow-400 dark:hover:border-yellow-600 transition-colors relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-24 h-24 bg-yellow-50 dark:bg-yellow-900/10 rounded-bl-full -mr-8 -mt-8"></div>
+                    <h3 className="text-2xl font-bold mb-6 flex items-center gap-2">
+                         <span className="bg-gradient-to-r from-yellow-600 via-yellow-400 to-yellow-600 bg-[length:200%_auto] bg-clip-text text-transparent animate-shimmer">Digital Mastery Works</span>
+                    </h3>
+
+                    <div className="space-y-4 mb-8">
+                        <div className="flex items-center gap-3 text-gray-700 dark:text-gray-300">
+                            <FacebookIcon className="w-5 h-5 text-blue-600" />
+                            <span>Search: <strong className="text-gray-900 dark:text-white">Digital Mastery Works</strong></span>
+                        </div>
+                        <div className="flex items-center gap-3 text-gray-700 dark:text-gray-300">
+                            <YouTubeIcon className="w-5 h-5 text-red-600" />
+                            <span>Search: <strong className="text-gray-900 dark:text-white">Digital Mastery Works</strong></span>
+                        </div>
+                        <div className="flex items-center gap-3 text-gray-700 dark:text-gray-300">
+                            <TikTokIcon className="w-5 h-5 text-black dark:text-white" />
+                            <span>Search: <strong className="text-gray-900 dark:text-white">Digital Mastery Works</strong></span>
+                        </div>
+                        <div className="flex items-center gap-3 text-gray-700 dark:text-gray-300">
+                            <InstagramIcon className="w-5 h-5 text-pink-600" />
+                            <span>Search: <strong className="text-gray-900 dark:text-white">Digital Mastery Works</strong></span>
+                        </div>
+                    </div>
+
+                    <div className="border-t border-gray-100 dark:border-gray-700 pt-6 space-y-4">
+                        <a href="https://alldmw.uk" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-900/50 hover:bg-yellow-50 dark:hover:bg-yellow-900/20 transition-colors group">
+                            <Globe className="w-5 h-5 text-gray-500 group-hover:text-yellow-600" />
+                            <span className="font-medium text-gray-700 dark:text-gray-200">Visit Website (alldmw.uk)</span>
+                        </a>
+                        <a href="https://wa.me/message/2AB3TGQHWNCJG1" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-900/50 hover:bg-green-50 dark:hover:bg-green-900/20 transition-colors group">
+                            <WhatsAppIcon className="w-5 h-5 text-green-500" />
+                            <span className="font-medium text-gray-700 dark:text-gray-200">Chat on WhatsApp</span>
+                        </a>
+                        <a href="mailto:admin@alldmw.uk" className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-900/50 hover:bg-yellow-50 dark:hover:bg-yellow-900/20 transition-colors group">
+                            <Mail className="w-5 h-5 text-gray-500 group-hover:text-yellow-600" />
+                            <span className="font-medium text-gray-700 dark:text-gray-200">admin@alldmw.uk</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+          </div>
+        );
+      
       case 'ABOUT':
         return (
           <div className="max-w-4xl mx-auto animate-fade-in p-4 sm:p-0">
             <button 
                 onClick={() => setAppState('SELECTION')}
                 className="flex items-center text-gray-500 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-400 font-medium mb-6 transition-colors"
+                aria-label="Back to Home"
             >
                 <ArrowLeft className="w-5 h-5 mr-2" />
                 Back to Home
@@ -670,6 +843,7 @@ export const App: React.FC = () => {
             <button
               onClick={() => setAppState('SELECTION')}
               className="flex items-center text-gray-500 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-400 font-medium mb-6 transition-colors"
+              aria-label="Back to Home"
             >
               <ArrowLeft className="w-5 h-5 mr-2" />
               Back to Home
@@ -744,13 +918,21 @@ export const App: React.FC = () => {
                  onClick={() => setIsChatOpen(true)}
                  className="fixed bottom-6 right-6 z-50 p-4 bg-green-600 text-white rounded-full shadow-lg hover:bg-green-700 transition-all hover:scale-110 animate-bounce-subtle ring-4 ring-green-100 dark:ring-green-900/30"
                  title="Open Chatbot"
+                 aria-label="Open ZOT Assistant Chat"
+                 aria-haspopup="dialog"
+                 aria-expanded={isChatOpen}
              >
                  <MessageCircle className="w-8 h-8" />
              </button>
 
              {/* Chat Overlay Modal */}
              {isChatOpen && (
-                 <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-fade-in">
+                 <div 
+                    className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-fade-in"
+                    role="dialog"
+                    aria-modal="true"
+                    aria-labelledby="chat-title"
+                 >
                      <div className="bg-white dark:bg-gray-800 w-full max-w-md rounded-2xl shadow-2xl overflow-hidden flex flex-col h-[600px] max-h-[85vh] border border-gray-200 dark:border-gray-700">
                          {/* Chat Header */}
                          <div className="flex items-center justify-between p-4 bg-green-600 border-b border-green-700">
@@ -759,13 +941,14 @@ export const App: React.FC = () => {
                                      <MessageCircle className="w-6 h-6 text-white" />
                                  </div>
                                  <div>
-                                     <h3 className="text-lg font-bold text-white">ZOT Assistant</h3>
+                                     <h3 id="chat-title" className="text-lg font-bold text-white">ZOTBOT</h3>
                                      <p className="text-xs text-green-100">AI Support Chat</p>
                                  </div>
                              </div>
                              <button 
                                  onClick={() => setIsChatOpen(false)} 
                                  className="text-white hover:bg-white/20 p-2 rounded-full transition-colors"
+                                 aria-label="Close Chat"
                              >
                                  <X className="w-6 h-6" />
                              </button>
@@ -777,7 +960,7 @@ export const App: React.FC = () => {
                                  <div className="flex flex-col items-center justify-center h-full text-center text-gray-400 p-6">
                                      <MessageCircle className="w-12 h-12 mb-3 text-gray-300 dark:text-gray-700" />
                                      <p className="text-sm italic">
-                                         Hello! I'm the ZOT Assistant. Ask me anything about the app features or how to get started.
+                                         Hello! I'm ZOTBOT. Ask me anything about the app features or how to get started.
                                      </p>
                                  </div>
                              )}
@@ -814,11 +997,13 @@ export const App: React.FC = () => {
                                      className="flex-1 px-4 py-2 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 dark:text-white text-sm"
                                      disabled={isChatLoading}
                                      autoFocus
+                                     aria-label="Type your question for the assistant"
                                  />
                                  <button 
                                      type="submit"
                                      disabled={!chatInput.trim() || isChatLoading}
                                      className="p-2.5 bg-green-600 text-white rounded-xl hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-sm"
+                                     aria-label="Send message"
                                  >
                                      <Send className="w-5 h-5" />
                                  </button>
@@ -838,6 +1023,7 @@ export const App: React.FC = () => {
                     <button
                         onClick={() => setAppState('SELECTION')}
                         className="flex items-center text-gray-500 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-400 font-medium transition-colors"
+                        aria-label="Back to Home"
                     >
                         <ArrowLeft className="w-5 h-5 mr-2" />
                         Back to Home
@@ -847,6 +1033,7 @@ export const App: React.FC = () => {
                         <button
                             onClick={clearHistory}
                             className="flex items-center text-red-500 hover:text-red-700 text-sm font-medium transition-colors"
+                            aria-label="Clear all quiz history"
                         >
                             <Trash2 className="w-4 h-4 mr-1" />
                             Clear History
@@ -872,6 +1059,7 @@ export const App: React.FC = () => {
                         <button 
                             onClick={() => setAppState('SELECTION')}
                             className="mt-6 px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                            aria-label="Start a new quiz"
                         >
                             Start a Quiz
                         </button>
@@ -890,6 +1078,7 @@ export const App: React.FC = () => {
                                     key={item.id}
                                     onClick={() => handleLoadHistoryItem(item)}
                                     className="w-full text-left bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 hover:border-green-400 dark:hover:border-green-500 hover:shadow-md transition-all flex flex-col sm:flex-row sm:items-center justify-between group"
+                                    aria-label={`Review quiz: ${item.subject} - ${item.topic}, Score: ${percent}%`}
                                 >
                                     <div className="mb-4 sm:mb-0">
                                         <div className="flex items-center gap-2 mb-1">
@@ -935,6 +1124,7 @@ export const App: React.FC = () => {
                 <button 
                     onClick={handleBackFromConfig}
                     className="flex items-center text-gray-500 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-400 font-medium mb-6 transition-colors"
+                    aria-label="Back to Topic Selection"
                 >
                     <ArrowLeft className="w-5 h-5 mr-2" />
                     Back to Topics
@@ -979,6 +1169,8 @@ export const App: React.FC = () => {
                                 <button 
                                     onClick={() => setQuestionCount('Auto')}
                                     className={`w-14 h-12 flex flex-col items-center justify-center text-sm font-bold rounded-lg transition-all border ${questionCount === 'Auto' ? 'bg-green-600 text-white border-green-600 shadow-md scale-110' : 'bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 border-gray-200 dark:border-gray-600 hover:border-green-400 hover:bg-green-50 dark:hover:bg-gray-600'}`}
+                                    aria-label="Auto select number of questions"
+                                    aria-pressed={questionCount === 'Auto'}
                                 >
                                     <span>Auto</span>
                                     <span className="text-[10px] font-normal opacity-70">Rand</span>
@@ -989,6 +1181,8 @@ export const App: React.FC = () => {
                                         key={num}
                                         onClick={() => setQuestionCount(num)}
                                         className={`w-14 h-12 flex items-center justify-center text-sm font-bold rounded-lg transition-all border ${questionCount === num ? 'bg-green-600 text-white border-green-600 shadow-md scale-110' : 'bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 border-gray-200 dark:border-gray-600 hover:border-green-400 hover:bg-green-50 dark:hover:bg-gray-600'}`}
+                                        aria-label={`Select ${num} questions`}
+                                        aria-pressed={questionCount === num}
                                     >
                                         {num}
                                     </button>
@@ -1003,6 +1197,7 @@ export const App: React.FC = () => {
                                         onChange={handleQuestionCountChange}
                                         placeholder={questionCount === 'Auto' ? "-" : "30"}
                                         className="w-20 px-3 py-2 text-sm font-medium border border-gray-200 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 outline-none text-center bg-white dark:bg-gray-700 dark:text-white"
+                                        aria-label="Enter custom number of questions (1-100)"
                                     />
                                 </div>
                             </div>
@@ -1023,6 +1218,8 @@ export const App: React.FC = () => {
                                         key={diff}
                                         onClick={() => setDifficulty(diff)}
                                         className={`px-4 py-3 text-sm font-medium rounded-xl transition-all border text-center ${difficulty === diff ? 'bg-green-600 text-white border-green-600 shadow-md ring-2 ring-offset-1 ring-green-600 dark:ring-offset-gray-800' : 'bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 border-gray-200 dark:border-gray-600 hover:border-green-400 hover:bg-green-50 dark:hover:bg-gray-600'}`}
+                                        aria-label={`Select Difficulty: ${diff}`}
+                                        aria-pressed={difficulty === diff}
                                     >
                                         {diff}
                                         {diff === 'Auto' && <span className="block text-[10px] opacity-70 font-normal">System Decides</span>}
@@ -1035,6 +1232,7 @@ export const App: React.FC = () => {
                              <button
                                 onClick={startQuizGeneration}
                                 className="w-full py-4 bg-green-600 text-white text-lg font-bold rounded-xl hover:bg-green-700 transition-all shadow-lg hover:shadow-green-500/40 flex items-center justify-center group"
+                                aria-label="Start generating the quiz"
                              >
                                 <Sparkles className="w-6 h-6 mr-2 group-hover:animate-spin-slow" />
                                 Start Quiz
@@ -1046,13 +1244,13 @@ export const App: React.FC = () => {
         );
 
       case 'TOPIC_SELECTION':
-        // ... (Existing TOPIC_SELECTION case content) ...
         if (selectedSubject === Subject.ZambianLanguages && !selectedLanguage) {
             return (
               <div className="max-w-4xl mx-auto animate-fade-in">
                 <button 
                     onClick={handleBackFromTopics}
                     className="flex items-center text-gray-500 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-400 font-medium mb-6 transition-colors"
+                    aria-label="Back to Subjects"
                 >
                     <ArrowLeft className="w-5 h-5 mr-2" />
                     Back to Subjects
@@ -1075,6 +1273,7 @@ export const App: React.FC = () => {
                                 key={lang}
                                 onClick={() => handleLanguageSelect(lang)}
                                 className="p-4 rounded-xl border-2 border-gray-100 dark:border-gray-700 hover:border-green-400 dark:hover:border-green-600 hover:bg-green-50 dark:hover:bg-green-900/20 text-gray-700 dark:text-gray-200 font-bold transition-all text-center shadow-sm hover:shadow-md bg-white dark:bg-gray-800"
+                                aria-label={`Select language: ${lang}`}
                             >
                                 {lang}
                             </button>
@@ -1090,6 +1289,8 @@ export const App: React.FC = () => {
              <button 
                 onClick={handleBackFromTopics}
                 className="flex items-center text-gray-500 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-400 font-medium mb-6 transition-colors"
+                aria-label={viewingLiteratureBooks ? 'Back to Literature Topics' : 
+                 selectedLanguage ? 'Back to Languages' : 'Back to Subjects'}
              >
                 <ArrowLeft className="w-5 h-5 mr-2" />
                 {viewingLiteratureBooks ? 'Back to Literature Topics' : 
@@ -1097,7 +1298,7 @@ export const App: React.FC = () => {
              </button>
 
              <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-8">
-                <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+                <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
                     <div className="flex items-center gap-4">
                        <div className="p-3 bg-green-100 dark:bg-green-900/30 rounded-xl shadow-sm">
                           {viewingLiteratureBooks ? <FolderOpen className="w-8 h-8 text-green-600 dark:text-green-400" /> : <Layers className="w-8 h-8 text-green-600 dark:text-green-400" />}
@@ -1123,9 +1324,34 @@ export const App: React.FC = () => {
                             onClick={handleCheckTrends}
                             disabled={isLoadingTrends}
                             className="flex items-center gap-2 text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium disabled:opacity-50 bg-blue-50 dark:bg-blue-900/30 px-4 py-2 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors"
+                            aria-label="Check Exam Trends using AI Search"
                         >
                             {isLoadingTrends ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
                             Check Exam Trends
+                        </button>
+                    )}
+                </div>
+
+                {/* SEARCH BAR */}
+                <div className="mb-6 relative group z-10">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <Search className="h-5 w-5 text-gray-400 group-focus-within:text-green-500 transition-colors" />
+                    </div>
+                    <input
+                        type="text"
+                        value={topicSearchQuery}
+                        onChange={(e) => setTopicSearchQuery(e.target.value)}
+                        className="block w-full pl-10 pr-10 py-3 border-2 border-gray-100 dark:border-gray-700 rounded-xl leading-5 bg-gray-50 dark:bg-gray-700/50 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:bg-white dark:focus:bg-gray-800 focus:ring-0 focus:border-green-500 transition-all shadow-sm"
+                        placeholder={viewingLiteratureBooks ? "Search for books or authors..." : "Search for a specific topic..."}
+                        aria-label="Search topics"
+                    />
+                    {topicSearchQuery && (
+                        <button
+                            onClick={() => setTopicSearchQuery('')}
+                            className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-red-500 transition-colors"
+                            aria-label="Clear search"
+                        >
+                            <X className="h-5 w-5" />
                         </button>
                     )}
                 </div>
@@ -1148,6 +1374,8 @@ export const App: React.FC = () => {
                                     key={bookName}
                                     onClick={() => handleTopicSelect(bookName)}
                                     className={`flex items-center p-4 rounded-xl border transition-all text-left group relative overflow-hidden ${selectedTopic === bookName ? 'border-green-600 bg-green-50 dark:bg-green-900/30 text-green-900 dark:text-green-100 ring-1 ring-green-600 shadow-md' : 'border-gray-200 dark:border-gray-700 hover:border-green-400 dark:hover:border-green-500 hover:bg-white dark:hover:bg-gray-700 hover:shadow-md bg-white dark:bg-gray-800'}`}
+                                    aria-label={`Select book: ${bookName}`}
+                                    aria-pressed={selectedTopic === bookName}
                                 >
                                     <div className={`p-2 rounded-lg mr-3 ${selectedTopic === bookName ? 'bg-white dark:bg-gray-800' : 'bg-green-50 dark:bg-green-900/30 group-hover:bg-green-100 dark:group-hover:bg-green-900/50'}`}>
                                         <Book className={`w-6 h-6 text-green-600 dark:text-green-400`} />
@@ -1175,6 +1403,8 @@ export const App: React.FC = () => {
                            <button
                               onClick={() => handleTopicSelect("General / All Topics")}
                               className={`flex flex-col p-5 rounded-xl border-2 text-left transition-all group ${selectedTopic === "General / All Topics" || selectedTopic === null ? 'border-green-600 bg-green-50 dark:bg-green-900/30 text-green-900 dark:text-green-100 ring-1 ring-green-600 shadow-md' : 'border-gray-100 dark:border-gray-700 hover:border-green-400 dark:hover:border-green-500 hover:bg-white dark:hover:bg-gray-700 hover:shadow-md bg-gray-50 dark:bg-gray-800'}`}
+                              aria-label="Select General / All Topics"
+                              aria-pressed={selectedTopic === "General / All Topics"}
                            >
                               <div className="flex items-start justify-between w-full mb-2">
                                   <div className={`p-2 rounded-lg ${selectedTopic === "General / All Topics" || selectedTopic === null ? 'bg-white dark:bg-gray-800' : 'bg-green-50 dark:bg-green-900/30 group-hover:bg-green-100 dark:group-hover:bg-green-900/50'}`}>
@@ -1198,6 +1428,8 @@ export const App: React.FC = () => {
                                 key={topicName}
                                 onClick={() => handleTopicSelect(topicName)}
                                 className={`flex flex-col p-5 rounded-xl border-2 text-left transition-all group ${isSelected ? 'border-green-600 bg-green-50 dark:bg-green-900/30 text-green-900 dark:text-green-100 ring-1 ring-green-600 shadow-md' : isFolder ? 'border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-900/20 hover:border-green-400 dark:hover:border-green-600 hover:shadow-md' : 'border-gray-100 dark:border-gray-700 hover:border-green-400 dark:hover:border-green-500 hover:bg-white dark:hover:bg-gray-700 hover:shadow-md bg-white dark:bg-gray-800'}`}
+                                aria-label={`Select topic: ${topicName}`}
+                                aria-pressed={isSelected}
                               >
                                 <div className="flex items-start justify-between w-full mb-3">
                                     {isFolder ? (
@@ -1234,6 +1466,7 @@ export const App: React.FC = () => {
                    <button
                       onClick={handleProceedToConfig}
                       className="px-8 py-4 bg-gray-900 dark:bg-gray-700 text-white text-lg font-bold rounded-xl hover:bg-gray-800 dark:hover:bg-gray-600 transition-all shadow-lg flex items-center group"
+                      aria-label="Proceed to configuration"
                    >
                       Next: Configure
                       <ChevronRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
@@ -1245,6 +1478,7 @@ export const App: React.FC = () => {
                 <button
                    onClick={handleProceedToConfig}
                    className="px-8 py-4 bg-gray-900 dark:bg-gray-700 text-white text-lg font-bold rounded-full hover:bg-gray-800 dark:hover:bg-gray-600 transition-all shadow-lg hover:shadow-gray-500/40 flex items-center group animate-bounce-subtle"
+                   aria-label="Proceed to configuration"
                 >
                    Next: Configure
                    <ChevronRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
@@ -1265,7 +1499,7 @@ export const App: React.FC = () => {
             <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-2">
               Generating {questionCount === 'Auto' ? 'Random' : questionCount} Questions...
             </h3>
-            <p className="text-gray-500 dark:text-gray-400 text-center max-w-md">
+            <p className="text-gray-600 dark:text-gray-300 text-center max-w-md">
               <span className="block font-medium text-green-700 dark:text-green-400 mb-1">{selectedLevel}</span>
               {selectedLanguage ? (
                  <span className="block font-medium text-amber-600 dark:text-amber-400 mb-1">{selectedLanguage}</span>
@@ -1299,6 +1533,7 @@ export const App: React.FC = () => {
             questions={questions}
             answers={quizAnswers}
             onRetry={retryQuiz}
+            onRetake={handleRetakeQuiz}
             onHome={resetApp}
             level={selectedLevel}
             topic={getDisplayTopic()}
@@ -1331,6 +1566,7 @@ export const App: React.FC = () => {
                  <button 
                   onClick={startQuizGeneration}
                   className="flex-1 flex items-center justify-center px-6 py-3 bg-green-600 text-white rounded-xl hover:bg-green-700 transition-all shadow-lg hover:shadow-green-500/30 font-bold"
+                  aria-label="Try generating the quiz again"
                  >
                    <RefreshCw className="w-5 h-5 mr-2" />
                    Try Again
@@ -1339,6 +1575,7 @@ export const App: React.FC = () => {
                  <button 
                   onClick={() => setAppState('CONFIG')}
                   className="flex-1 px-6 py-3 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-600 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors font-medium shadow-sm"
+                  aria-label="Change quiz configuration settings"
                  >
                    Change Settings
                  </button>
@@ -1347,6 +1584,7 @@ export const App: React.FC = () => {
              <button 
               onClick={resetApp}
               className="mt-8 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 underline transition-colors"
+              aria-label="Return to Home Screen"
              >
                Return to Home Screen
              </button>
@@ -1359,49 +1597,105 @@ export const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white font-sans transition-colors duration-200">
-      <nav className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50">
+    <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white font-sans transition-colors duration-200 relative">
+      
+      <nav 
+        className="bg-white/90 dark:bg-gray-800/90 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50 backdrop-blur-sm"
+        role="navigation"
+        aria-label="Main Navigation"
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2 cursor-pointer" onClick={resetApp}>
+          <button 
+            className="flex items-center gap-2 cursor-pointer bg-transparent border-none p-0" 
+            onClick={resetApp}
+            aria-label="Go to Home"
+          >
             <div className="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center text-white shrink-0">
               <BrainCircuit className="w-5 h-5" />
             </div>
             <span className="text-sm sm:text-xl font-bold tracking-tight bg-gradient-to-r from-green-500 via-blue-600 via-red-500 to-yellow-500 bg-[length:300%_auto] bg-clip-text text-transparent animate-shimmer">
                ZOT DYNAMIC QUIZZES-ZEDDY ONLINE TUITIONS
             </span>
-          </div>
+          </button>
           <div className="flex items-center gap-3 sm:gap-4">
-             {/* Removed History, Help, About buttons from here */}
-             
+             <button
+               onClick={() => setAppState('LEADERBOARD')}
+               className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-yellow-100 dark:bg-yellow-900/30 hover:bg-yellow-200 dark:hover:bg-yellow-800/50 text-yellow-700 dark:text-yellow-400 rounded-lg text-xs font-semibold transition-all border border-yellow-200 dark:border-yellow-800"
+               aria-label="Leaderboard"
+             >
+               <Trophy className="w-3.5 h-3.5" />
+               Leaderboard
+             </button>
+
+             <button
+               onClick={() => setAppState('CONTACT')}
+               className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 dark:bg-gray-700 hover:bg-green-50 dark:hover:bg-green-900/30 text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 rounded-lg text-xs font-semibold transition-all border border-gray-200 dark:border-gray-600 hover:border-green-300 dark:hover:border-green-500"
+               aria-label="Contact Us"
+             >
+               <Mail className="w-3.5 h-3.5" />
+               Get In Touch
+             </button>
+
              <RealTimeClock />
              
              <button 
                onClick={toggleTheme} 
                className="p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                title="Toggle Theme"
+               aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"}
              >
                {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
              </button>
-             <div className="text-sm text-gray-500 dark:text-gray-400 hidden lg:block border-l border-gray-200 dark:border-gray-700 pl-4">
+             <div className="text-sm text-gray-600 dark:text-gray-400 hidden lg:block border-l border-gray-200 dark:border-gray-700 pl-4">
                Zambia ECZ Syllabus
              </div>
           </div>
         </div>
       </nav>
 
-      <main className="flex-grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+      {/* Development Banner */}
+      {showDevBanner && (
+        <div className="bg-amber-100 dark:bg-amber-900/30 border-b border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-200 px-4 py-3 relative z-40">
+          <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3 text-sm font-medium">
+               <div className="p-1.5 bg-amber-200 dark:bg-amber-800 rounded-full shrink-0">
+                  <Construction className="w-4 h-4 text-amber-700 dark:text-amber-100" />
+               </div>
+               <p className="leading-tight">
+                 <span className="font-bold">Note:</span> This app is currently under active development and not yet fully developed. We shall be making necessary improvements as time goes by and pledge to add all missing features soon.
+               </p>
+            </div>
+            <button 
+              onClick={() => setShowDevBanner(false)} 
+              className="p-1.5 hover:bg-amber-200 dark:hover:bg-amber-800 rounded-full transition-colors text-amber-600 dark:text-amber-300"
+              aria-label="Dismiss banner"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      )}
+
+      <main className="flex-grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 relative z-10" role="main">
         {renderContent()}
       </main>
 
-      <footer className="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 py-8 mt-auto">
-         <div className="max-w-7xl mx-auto px-4 text-center text-gray-500 dark:text-gray-400 text-sm">
+      <ScrollToTop />
+
+      <footer 
+        className="bg-white/90 dark:bg-gray-800/90 border-t border-gray-200 dark:border-gray-700 py-8 mt-auto relative z-10 backdrop-blur-sm"
+        role="contentinfo"
+      >
+         <div className="max-w-7xl mx-auto px-4 text-center text-gray-600 dark:text-gray-400 text-sm">
            
-           <div className="flex justify-center gap-6 mb-8 font-medium">
-                <button onClick={() => setAppState('HISTORY')} className="hover:text-green-600 dark:hover:text-green-400 transition-colors">History</button>
-                <button onClick={() => setAppState('HELP')} className="hover:text-green-600 dark:hover:text-green-400 transition-colors">Help</button>
-                <button onClick={() => setAppState('ABOUT')} className="hover:text-green-600 dark:hover:text-green-400 transition-colors">About Us</button>
-                <button onClick={resetApp} className="hover:text-green-600 dark:hover:text-green-400 transition-colors">Home</button>
-           </div>
+           <nav className="flex justify-center gap-6 mb-8 font-medium" aria-label="Footer Navigation">
+                <button onClick={() => setAppState('LEADERBOARD')} className="hover:text-green-600 dark:hover:text-green-400 transition-colors" aria-label="View Leaderboard">Leaderboard</button>
+                <button onClick={() => setAppState('HISTORY')} className="hover:text-green-600 dark:hover:text-green-400 transition-colors" aria-label="View Quiz History">History</button>
+                <button onClick={() => setAppState('HELP')} className="hover:text-green-600 dark:hover:text-green-400 transition-colors" aria-label="View Help and FAQ">Help</button>
+                <button onClick={() => setAppState('ABOUT')} className="hover:text-green-600 dark:hover:text-green-400 transition-colors" aria-label="View About Us">About Us</button>
+                <button onClick={() => setAppState('CONTACT')} className="hover:text-green-600 dark:hover:text-green-400 transition-colors" aria-label="Contact Us">Contact</button>
+                <button onClick={resetApp} className="hover:text-green-600 dark:hover:text-green-400 transition-colors" aria-label="Go to Home">Home</button>
+           </nav>
 
            <div className="border-t border-gray-100 dark:border-gray-700/50 pt-6 pb-8 max-w-2xl mx-auto">
               <p className="text-xs uppercase tracking-wider font-bold text-gray-400 mb-3">Powered by</p>
@@ -1416,10 +1710,12 @@ export const App: React.FC = () => {
               </div>
            </div>
            
-           <p className="mb-2 text-gray-500 dark:text-gray-400">Based on the Zambian latest O level Syllabus</p>
+           <p className="mb-2 text-gray-600 dark:text-gray-400">Based on the Zambian latest O level Syllabus</p>
            <p className="font-semibold text-gray-700 dark:text-gray-300">&#169; 2025 ZOT Dynamic Quizzes-Zeddy Online Tuitions. All Rights Reserved.</p>
          </div>
       </footer>
     </div>
   );
 };
+
+export default App;

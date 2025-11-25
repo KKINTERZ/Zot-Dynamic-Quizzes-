@@ -1,6 +1,7 @@
+
 import React, { useState } from 'react';
 import { Question, Subject, EducationLevel, Difficulty } from '../types';
-import { Trophy, RefreshCw, Home, XCircle, CheckCircle, Download, BrainCircuit, Loader2, FileText } from 'lucide-react';
+import { Trophy, RefreshCw, Home, XCircle, CheckCircle, Download, BrainCircuit, Loader2, FileText, Image as ImageIcon, RotateCcw } from 'lucide-react';
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
 import { getDeepExplanation } from '../services/geminiService';
@@ -10,13 +11,14 @@ interface ResultsViewProps {
   questions: Question[];
   answers: { questionId: number; selectedIndex: number }[];
   onRetry: () => void;
+  onRetake: () => void;
   onHome: () => void;
   level: EducationLevel;
   topic: string;
   difficulty: Difficulty;
 }
 
-const ResultsView: React.FC<ResultsViewProps> = ({ subject, questions, answers, onRetry, onHome, level, topic, difficulty }) => {
+const ResultsView: React.FC<ResultsViewProps> = ({ subject, questions, answers, onRetry, onRetake, onHome, level, topic, difficulty }) => {
   const [deepThinkingId, setDeepThinkingId] = useState<number | null>(null);
   const [deepExplanation, setDeepExplanation] = useState<string | null>(null);
   const [isThinking, setIsThinking] = useState(false);
@@ -277,20 +279,34 @@ const ResultsView: React.FC<ResultsViewProps> = ({ subject, questions, answers, 
           <button
             onClick={handleDownloadPDF}
             className="flex items-center justify-center gap-2 px-6 py-3 bg-gray-800 dark:bg-gray-700 text-white rounded-lg font-semibold hover:bg-gray-900 dark:hover:bg-gray-600 transition-colors shadow-lg hover:shadow-xl"
+            aria-label="Download performance report as PDF"
           >
             <Download className="w-4 h-4" />
             Download Report (PDF)
           </button>
+          
+          <button
+            onClick={onRetake}
+            className="flex items-center justify-center gap-2 px-6 py-3 bg-orange-600 text-white rounded-lg font-semibold hover:bg-orange-700 transition-colors shadow-lg hover:shadow-xl"
+            aria-label="Retake the same quiz"
+          >
+            <RotateCcw className="w-4 h-4" />
+            Retry Quiz
+          </button>
+
           <button
             onClick={onRetry}
             className="flex items-center justify-center gap-2 px-6 py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors"
+            aria-label="Try another quiz with same settings"
           >
             <RefreshCw className="w-4 h-4" />
             Try Another Quiz
           </button>
+          
           <button
             onClick={onHome}
             className="flex items-center justify-center gap-2 px-6 py-3 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg font-semibold hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+            aria-label="Return to subject selection"
           >
             <Home className="w-4 h-4" />
             Subjects
@@ -319,6 +335,14 @@ const ResultsView: React.FC<ResultsViewProps> = ({ subject, questions, answers, 
                     }
                   </div>
                   <div className="w-full">
+                    {/* Image Preview in Results */}
+                    {q.imageUrl && (
+                        <div className="mb-3 w-full max-w-xs rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700">
+                             <img src={q.imageUrl} alt="Question Diagram" className="w-full h-auto object-cover" />
+                             <div className="px-2 py-1 bg-gray-50 dark:bg-gray-900 text-[10px] text-gray-500 text-center uppercase tracking-wide">Diagram</div>
+                        </div>
+                    )}
+
                     <div className="flex justify-between items-start">
                         <p className="text-gray-900 dark:text-gray-100 font-medium mb-2">{idx + 1}. {formatText(q.text)}</p>
                     </div>
@@ -340,6 +364,7 @@ const ResultsView: React.FC<ResultsViewProps> = ({ subject, questions, answers, 
                            <button 
                             onClick={() => handleDeepExplain(q)}
                             className="mt-2 inline-flex items-center px-3 py-1.5 text-xs font-medium text-blue-700 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-md hover:bg-blue-100 dark:hover:bg-blue-900/50 hover:border-blue-300 transition-all shadow-sm"
+                            aria-label="Get a deep explanation for this question from the Virtual Tutor"
                            >
                                <BrainCircuit className="w-3 h-3 mr-2" />
                                Deep Explain with Virtual Tutor

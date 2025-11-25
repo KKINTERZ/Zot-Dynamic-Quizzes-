@@ -107,13 +107,23 @@ export const SUBJECT_TOPICS: Record<Subject, TopicDef[]> = {
     { topic: "Travel Graphs", icon: "TrendingUp", levels: [EducationLevel.SeniorSecondary], description: "Distance-time and speed-time graphs." },
     { topic: "Social & Commercial Arithmetic", icon: "Banknote", levels: [EducationLevel.SeniorSecondary], description: "Advanced finance, taxation, and investments." },
     { topic: "Statistics & Probability", icon: "BarChart3", levels: [EducationLevel.SeniorSecondary], description: "Cumulative frequency, standard deviation, and combined events." },
-    { topic: "Geometry & Angles", icon: "Triangle", levels: [EducationLevel.SeniorSecondary], description: "Circle theorems and tangent properties." },
-    { topic: "Trigonometry", icon: "Activity", levels: [EducationLevel.SeniorSecondary], description: "Sine/Cosine rules, bearings, and 3D trig." },
+    { topic: "Geometry & Angles", icon: "Triangle", levels: [EducationLevel.SeniorSecondary], description: "Polygons and general angle properties." },
+    { topic: "Trigonometry", icon: "Activity", levels: [EducationLevel.SeniorSecondary], description: "Sine/Cosine rules, area of triangle and 3D trig." },
     { topic: "Calculus (Diff/Int)", icon: "FunctionSquare", levels: [EducationLevel.SeniorSecondary], description: "Differentiation and integration of basic functions." },
     { topic: "Vectors", icon: "MoveDiagonal", levels: [EducationLevel.SeniorSecondary], description: "Vector geometry, addition, subtraction, and translation." },
     { topic: "Functions", icon: "Webhook", levels: [EducationLevel.SeniorSecondary], description: "Function notation, inverse functions, and composite functions." },
     { topic: "Earth Geometry", icon: "Globe", levels: [EducationLevel.SeniorSecondary], description: "Latitude, longitude, and distance calculation on the earth's surface." },
-    { topic: "Linear Programming", icon: "Maximize", levels: [EducationLevel.SeniorSecondary], description: "Inequalities and optimization using graphical methods." }
+    { topic: "Linear Programming", icon: "Maximize", levels: [EducationLevel.SeniorSecondary], description: "Inequalities and optimization using graphical methods." },
+    
+    // Additional Senior Topics
+    { topic: "Variation", icon: "GitMerge", levels: [EducationLevel.SeniorSecondary], description: "Direct, inverse, joint and partial variation." },
+    { topic: "Graphs of Polynomials", icon: "Activity", levels: [EducationLevel.SeniorSecondary], description: "Cubic functions, gradients, and curve sketching." },
+    { topic: "Geometrical Construction & Loci", icon: "DraftingCompass", levels: [EducationLevel.SeniorSecondary], description: "Complex constructions and locus of points." },
+    { topic: "Transformations", icon: "Move", levels: [EducationLevel.SeniorSecondary], description: "Reflection, rotation, translation, enlargement, shear and stretch." },
+    { topic: "Circle Theorems", icon: "Circle", levels: [EducationLevel.SeniorSecondary], description: "Angle properties in a circle and tangent theorems." },
+    { topic: "Bearings", icon: "Compass", levels: [EducationLevel.SeniorSecondary], description: "Advanced bearings and navigation problems." },
+    { topic: "Sequences & Series", icon: "ListOrdered", levels: [EducationLevel.SeniorSecondary], description: "Patterns, arithmetic and geometric progressions." },
+    { topic: "Mensuration", icon: "Box", levels: [EducationLevel.SeniorSecondary], description: "Surface area and volume of 3D shapes including frustums." }
   ],
   [Subject.Biology]: [
     { topic: "Living Organisms and Life Processes", icon: "Sprout", levels: [EducationLevel.SeniorSecondary], description: "Characteristics of living things and classification." },

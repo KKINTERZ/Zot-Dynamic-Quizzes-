@@ -104,6 +104,7 @@ const SubjectCard: React.FC<SubjectCardProps> = ({ subject, onClick }) => {
     <button
       onClick={() => onClick(subject)}
       className="flex flex-col items-start p-6 bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md border border-gray-100 dark:border-gray-700 transition-all hover:border-green-400 dark:hover:border-green-500 hover:-translate-y-1 w-full text-left group"
+      aria-label={`Select subject ${subject}: ${getDescription()}`}
     >
       <div className="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg mb-4 group-hover:bg-green-50 dark:group-hover:bg-green-900/30 transition-colors">
         {getIcon()}

@@ -1,6 +1,7 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Question, Subject } from '../types';
-import { CheckCircle, XCircle, ArrowRight, Timer, Clock } from 'lucide-react';
+import { CheckCircle, XCircle, ArrowRight, Timer, Clock, ZoomIn, X } from 'lucide-react';
 
 interface QuizInterfaceProps {
   subject: Subject;
@@ -19,6 +20,7 @@ const QuizInterface: React.FC<QuizInterfaceProps> = ({ subject, questions, onCom
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [answers, setAnswers] = useState<{ questionId: number; selectedIndex: number }[]>(initialProgress?.answers || []);
   const [showFeedback, setShowFeedback] = useState(false);
+  const [expandedImage, setExpandedImage] = useState<string | null>(null);
   
   // Timer State
   const [questionTimeLeft, setQuestionTimeLeft] = useState(0);
@@ -229,6 +231,41 @@ const QuizInterface: React.FC<QuizInterfaceProps> = ({ subject, questions, onCom
     }
   }, [showFeedback, selectedOption, currentQuestion]);
 
+  const playCompletionSound = () => {
+    try {
+        const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+        const ctx = new AudioContextClass();
+        const now = ctx.currentTime;
+
+        // Subtle ascending chime
+        const frequencies = [523.25, 659.25, 783.99, 1046.50]; // C E G C
+        
+        frequencies.forEach((freq, i) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, now + (i * 0.08));
+            
+            gain.gain.setValueAtTime(0, now + (i * 0.08));
+            gain.gain.linearRampToValueAtTime(0.15, now + (i * 0.08) + 0.05);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + (i * 0.08) + 0.6);
+            
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            
+            osc.start(now + (i * 0.08));
+            osc.stop(now + (i * 0.08) + 0.6);
+        });
+        
+        setTimeout(() => {
+           if(ctx.state !== 'closed') ctx.close();
+        }, 1200);
+    } catch (e) {
+        console.error("Audio play failed", e);
+    }
+  };
+
   const handleTimeout = () => {
     setIsTimerActive(false);
     if (selectedOption === null) {
@@ -269,6 +306,7 @@ const QuizInterface: React.FC<QuizInterfaceProps> = ({ subject, questions, onCom
         const newAnswers = [...answers, { questionId: currentQuestion.id, selectedIndex: finalSelection }];
         setAnswers(newAnswers);
         if (isLastQuestion) {
+             playCompletionSound();
              clearSession(); // Clear storage
              onComplete(newAnswers);
              return;
@@ -285,6 +323,7 @@ const QuizInterface: React.FC<QuizInterfaceProps> = ({ subject, questions, onCom
         setAnswers(newAnswers);
 
         if (isLastQuestion) {
+          playCompletionSound();
           clearSession(); // Clear storage
           onComplete(newAnswers);
         } else {
@@ -302,6 +341,16 @@ const QuizInterface: React.FC<QuizInterfaceProps> = ({ subject, questions, onCom
 
   return (
     <div className="max-w-3xl mx-auto w-full">
+      {/* Expanded Image Modal */}
+      {expandedImage && (
+         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4 animate-fade-in" onClick={() => setExpandedImage(null)}>
+             <button className="absolute top-4 right-4 text-white hover:text-red-400 p-2 rounded-full bg-white/10 backdrop-blur-sm">
+                 <X className="w-8 h-8" />
+             </button>
+             <img src={expandedImage} alt="Expanded diagram" className="max-w-full max-h-[90vh] rounded-lg shadow-2xl object-contain" />
+         </div>
+      )}
+
       {/* Header */}
       <div className="flex justify-between items-start mb-6 bg-white p-4 rounded-xl shadow-sm border border-gray-100">
         <div>
@@ -315,20 +364,36 @@ const QuizInterface: React.FC<QuizInterfaceProps> = ({ subject, questions, onCom
         <div className="flex flex-col items-end gap-2">
           <div className="flex items-center gap-3">
             {/* Timer */}
-            <div className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-all duration-300 ${getTimerColor()}`}>
+            <div 
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-all duration-300 ${getTimerColor()}`}
+              role="timer"
+              aria-live="polite"
+              aria-label={`Time remaining: ${formatTime(questionTimeLeft)}`}
+            >
               <Clock className="w-5 h-5" />
-              <span className="text-xl font-mono tabular-nums">{formatTime(questionTimeLeft)}</span>
+              <span className="text-xl font-mono tabular-nums" aria-hidden="true">{formatTime(questionTimeLeft)}</span>
             </div>
           </div>
           
-          <button onClick={handleQuit} className="text-xs text-gray-400 hover:text-red-500 underline pr-1">
+          <button 
+            onClick={handleQuit} 
+            className="text-xs text-gray-400 hover:text-red-500 underline pr-1"
+            aria-label="Quit current quiz"
+          >
             Quit Quiz
           </button>
         </div>
       </div>
 
       {/* Progress Bar */}
-      <div className="w-full bg-gray-200 rounded-full h-2.5 mb-8">
+      <div 
+        className="w-full bg-gray-200 rounded-full h-2.5 mb-8"
+        role="progressbar"
+        aria-valuenow={Math.round(((currentQuestionIndex) / questions.length) * 100)}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-label={`Quiz progress: ${currentQuestionIndex} of ${questions.length} questions completed`}
+      >
         <div 
           className="bg-green-600 h-2.5 rounded-full transition-all duration-300" 
           style={{ width: `${((currentQuestionIndex) / questions.length) * 100}%` }}
@@ -342,6 +407,28 @@ const QuizInterface: React.FC<QuizInterfaceProps> = ({ subject, questions, onCom
            className={`absolute top-0 left-0 h-1 transition-all duration-1000 ease-linear ${questionTimeLeft < 10 ? 'bg-red-500' : 'bg-green-400'}`}
            style={{ width: `${(questionTimeLeft / totalQuestionTime) * 100}%` }}
         />
+
+        {/* Generated Image/Illustration */}
+        {currentQuestion.imageUrl && (
+            <div className="mb-6 relative group">
+                <div 
+                    className="w-full h-64 bg-gray-50 rounded-lg border border-gray-200 flex items-center justify-center overflow-hidden cursor-zoom-in"
+                    onClick={() => setExpandedImage(currentQuestion.imageUrl || null)}
+                >
+                    <img 
+                        src={currentQuestion.imageUrl} 
+                        alt="Question illustration" 
+                        className="max-w-full max-h-full object-contain"
+                    />
+                </div>
+                <button 
+                    onClick={() => setExpandedImage(currentQuestion.imageUrl || null)}
+                    className="absolute bottom-2 right-2 p-2 bg-white/90 backdrop-blur-sm rounded-lg shadow-sm text-gray-600 hover:text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                    <ZoomIn className="w-5 h-5" />
+                </button>
+            </div>
+        )}
 
         <h3 className="text-xl font-medium text-gray-900 mb-6 leading-relaxed">
           {formatText(currentQuestion.text)}
@@ -372,6 +459,8 @@ const QuizInterface: React.FC<QuizInterfaceProps> = ({ subject, questions, onCom
                 onClick={() => handleOptionSelect(idx)}
                 disabled={showFeedback}
                 className={`w-full text-left p-4 rounded-xl border-2 transition-all flex items-center ${buttonStyle}`}
+                aria-label={`Option ${String.fromCharCode(65 + idx)}: ${option}`}
+                aria-pressed={selectedOption === idx}
               >
                 <span className="flex-shrink-0 w-8 h-8 rounded-full bg-white border border-gray-200 flex items-center justify-center text-sm font-semibold text-gray-600 mr-4">
                   {String.fromCharCode(65 + idx)}
@@ -403,6 +492,7 @@ const QuizInterface: React.FC<QuizInterfaceProps> = ({ subject, questions, onCom
             onClick={handleSubmitAnswer}
             disabled={selectedOption === null}
             className="px-6 py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-md"
+            aria-label="Check your answer"
           >
             Check Answer
           </button>
@@ -410,6 +500,7 @@ const QuizInterface: React.FC<QuizInterfaceProps> = ({ subject, questions, onCom
           <button
             onClick={handleNext}
             className="px-6 py-3 bg-gray-900 text-white rounded-lg font-semibold hover:bg-gray-800 flex items-center gap-2 transition-colors shadow-md"
+            aria-label={isLastQuestion ? "Finish Quiz" : "Go to next question"}
           >
             {isLastQuestion ? 'Finish Quiz' : 'Next Question'}
             <ArrowRight className="w-4 h-4" />

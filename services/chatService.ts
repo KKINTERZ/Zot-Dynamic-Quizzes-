@@ -1,9 +1,10 @@
+
 import { GoogleGenAI } from "@google/genai";
 import { ChatMessage } from "../types";
 
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
-const SYSTEM_INSTRUCTION = `You are the ZOT Assistant, a helpful AI support agent for the 'ZOT Dynamic Quizzes' application.
+const SYSTEM_INSTRUCTION = `You are ZOTBOT, a helpful AI support agent for the 'ZOT Dynamic Quizzes' application.
 
 APP INFORMATION:
 - Name: ZOT Dynamic Quizzes
@@ -24,7 +25,7 @@ TONE:
 - Friendly, encouraging, and professional.
 - Keep answers concise and easy to read.
 - If asked about non-app topics, politely steer back to the app or education.
-- Use formatting (bullet points, bold text) to make answers clear.
+- Use formatting (bullet points, bold text) to make answers clear, but avoid excessive markdown symbols as they will be stripped.
 `;
 
 export const getChatResponse = async (history: ChatMessage[], userMessage: string): Promise<string> => {
@@ -46,9 +47,12 @@ export const getChatResponse = async (history: ChatMessage[], userMessage: strin
       }
     });
 
-    return response.text || "I didn't get a response. Please try again.";
+    const text = response.text || "I didn't get a response. Please try again.";
+    
+    // Clean up markdown characters (stars and hashes) as requested
+    return text.replace(/[*#]/g, '');
   } catch (error) {
-    console.error("ZOT Assistant Error:", error);
+    console.error("ZOTBOT Error:", error);
     return "I'm having trouble connecting to the server. Please check your internet connection and try again.";
   }
 };
