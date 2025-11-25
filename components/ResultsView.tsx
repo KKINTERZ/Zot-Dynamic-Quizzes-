@@ -1,7 +1,6 @@
-
 import React, { useState } from 'react';
 import { Question, Subject, EducationLevel, Difficulty } from '../types';
-import { Trophy, RefreshCw, Home, XCircle, CheckCircle, Download, BrainCircuit, Loader2, FileText, Image as ImageIcon, RotateCcw } from 'lucide-react';
+import { Trophy, RefreshCw, Home, XCircle, CheckCircle, Download, BrainCircuit, Loader2, RotateCcw, Eye, Lock } from 'lucide-react';
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
 import { getDeepExplanation } from '../services/geminiService';
@@ -16,12 +15,36 @@ interface ResultsViewProps {
   level: EducationLevel;
   topic: string;
   difficulty: Difficulty;
+  isExamMode?: boolean;
+  retryCount?: number;
 }
 
-const ResultsView: React.FC<ResultsViewProps> = ({ subject, questions, answers, onRetry, onRetake, onHome, level, topic, difficulty }) => {
+const ResultsView: React.FC<ResultsViewProps> = ({ 
+    subject, 
+    questions, 
+    answers, 
+    onRetry, 
+    onRetake, 
+    onHome, 
+    level, 
+    topic, 
+    difficulty,
+    isExamMode = false,
+    retryCount = 0
+}) => {
   const [deepThinkingId, setDeepThinkingId] = useState<number | null>(null);
   const [deepExplanation, setDeepExplanation] = useState<string | null>(null);
   const [isThinking, setIsThinking] = useState(false);
+  const [forfeitRetry, setForfeitRetry] = useState(false);
+
+  // Logic to hide answers
+  // Hide if Exam Mode is active AND it's the first attempt (retryCount 0) AND user hasn't forfeited
+  const hideAnswers = isExamMode && retryCount === 0 && !forfeitRetry;
+  
+  // Logic for allowing retry
+  // 1. If NOT Exam Mode: Always allow.
+  // 2. If Exam Mode: Allow only if retries < 1 AND user hasn't forfeited (viewed answers).
+  const canRetry = !isExamMode || (isExamMode && retryCount < 1 && !forfeitRetry);
 
   const calculateScore = () => {
     let correct = 0;
@@ -275,24 +298,41 @@ const ResultsView: React.FC<ResultsViewProps> = ({ subject, questions, answers, 
         </div>
         <p className={`text-lg font-medium ${color} mb-8`}>{percentage}% Score</p>
 
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+        {/* ACTIONS ROW */}
+        <div className="flex flex-col sm:flex-row gap-4 justify-center flex-wrap">
+          {/* Download is always available */}
           <button
             onClick={handleDownloadPDF}
             className="flex items-center justify-center gap-2 px-6 py-3 bg-gray-800 dark:bg-gray-700 text-white rounded-lg font-semibold hover:bg-gray-900 dark:hover:bg-gray-600 transition-colors shadow-lg hover:shadow-xl"
             aria-label="Download performance report as PDF"
           >
             <Download className="w-4 h-4" />
-            Download Report (PDF)
+            Download Report
           </button>
           
-          <button
-            onClick={onRetake}
-            className="flex items-center justify-center gap-2 px-6 py-3 bg-orange-600 text-white rounded-lg font-semibold hover:bg-orange-700 transition-colors shadow-lg hover:shadow-xl"
-            aria-label="Retake the same quiz"
-          >
-            <RotateCcw className="w-4 h-4" />
-            Retry Quiz
-          </button>
+          {/* RETAKE Logic */}
+          {canRetry && (
+              <button
+                onClick={onRetake}
+                className="flex items-center justify-center gap-2 px-6 py-3 bg-orange-600 text-white rounded-lg font-semibold hover:bg-orange-700 transition-colors shadow-lg hover:shadow-xl"
+                aria-label="Retake the same quiz"
+              >
+                <RotateCcw className="w-4 h-4" />
+                {isExamMode ? `Retry Quiz (1 Left)` : 'Retry Quiz'}
+              </button>
+          )}
+
+          {/* FORFEIT RETRY Logic (Exam Mode Only) */}
+          {hideAnswers && (
+              <button
+                onClick={() => setForfeitRetry(true)}
+                className="flex items-center justify-center gap-2 px-6 py-3 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 transition-colors shadow-lg hover:shadow-xl"
+                aria-label="Reveal answers and forfeit retry"
+              >
+                <Eye className="w-4 h-4" />
+                View Answers (End Exam)
+              </button>
+          )}
 
           <button
             onClick={onRetry}
@@ -314,10 +354,38 @@ const ResultsView: React.FC<ResultsViewProps> = ({ subject, questions, answers, 
         </div>
       </div>
 
-      {/* Detailed Breakdown */}
-      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-8 text-left">
+      {/* Detailed Breakdown / Review Answers */}
+      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-8 text-left relative overflow-hidden">
+        
+        {/* LOCKED STATE OVERLAY */}
+        {hideAnswers && (
+            <div className="absolute inset-0 z-10 bg-white/80 dark:bg-gray-900/90 backdrop-blur-md flex flex-col items-center justify-center text-center p-6">
+                <div className="bg-orange-100 dark:bg-orange-900/30 p-6 rounded-full mb-4">
+                    <Lock className="w-12 h-12 text-orange-600 dark:text-orange-500" />
+                </div>
+                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Answers Hidden</h3>
+                <p className="text-gray-600 dark:text-gray-300 max-w-md mb-6">
+                    Exam Mode is active. You cannot review answers until you use your retry or forfeit the exam session.
+                </p>
+                <div className="flex gap-4">
+                    <button 
+                        onClick={onRetake}
+                        className="px-8 py-3 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-xl shadow-lg transition-all transform hover:scale-105"
+                    >
+                        Use Retry Now
+                    </button>
+                    <button 
+                        onClick={() => setForfeitRetry(true)}
+                        className="px-8 py-3 bg-transparent border-2 border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 font-bold rounded-xl transition-all"
+                    >
+                        View Answers
+                    </button>
+                </div>
+            </div>
+        )}
+
         <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-6">Review Answers</h3>
-        <div className="space-y-6">
+        <div className={`space-y-6 ${hideAnswers ? 'blur-sm select-none opacity-50' : ''}`}>
           {questions.map((q, idx) => {
             const userAnswer = answers.find(a => a.questionId === q.id);
             const userIndex = userAnswer?.selectedIndex ?? -1;
@@ -360,7 +428,7 @@ const ResultsView: React.FC<ResultsViewProps> = ({ subject, questions, answers, 
                        </p>
                        
                        {/* Feature: Thinking Mode Trigger */}
-                       {!isCorrect && !isThinkingAboutThis && (
+                       {!isCorrect && !isThinkingAboutThis && !hideAnswers && (
                            <button 
                             onClick={() => handleDeepExplain(q)}
                             className="mt-2 inline-flex items-center px-3 py-1.5 text-xs font-medium text-blue-700 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-md hover:bg-blue-100 dark:hover:bg-blue-900/50 hover:border-blue-300 transition-all shadow-sm"

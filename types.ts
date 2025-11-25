@@ -61,7 +61,7 @@ export interface QuizResult {
   answers: { questionId: number; selectedIndex: number }[];
 }
 
-export type AppState = 'SELECTION' | 'TOPIC_SELECTION' | 'CONFIG' | 'LOADING' | 'QUIZ' | 'RESULTS' | 'ERROR' | 'LIVE_TUTOR' | 'ABOUT' | 'HELP' | 'HISTORY' | 'CONTACT' | 'LEADERBOARD';
+export type AppState = 'SELECTION' | 'TOPIC_SELECTION' | 'CONFIG' | 'LOADING' | 'QUIZ' | 'RESULTS' | 'ERROR' | 'LIVE_TUTOR' | 'ABOUT' | 'HELP' | 'HISTORY' | 'CONTACT' | 'LEADERBOARD' | 'TEACHER_PREVIEW';
 
 export interface QuizConfig {
   subject: Subject;

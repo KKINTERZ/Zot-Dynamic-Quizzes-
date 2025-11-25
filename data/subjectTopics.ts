@@ -1,4 +1,3 @@
-
 import { Subject, EducationLevel } from '../types';
 
 export const ZAMBIAN_LANGUAGES = [
@@ -713,5 +712,61 @@ export const SUBJECT_TOPICS: Record<Subject, TopicDef[]> = {
     { topic: "Spatial Visualization", icon: "Box", description: "Mental rotation of objects." },
     { topic: "Series Completion", icon: "ArrowRightCircle", description: "Next shape in sequence." },
     { topic: "Geometric Shapes", icon: "Triangle", description: "Properties of shapes." }
+  ]
+};
+
+export const SUBJECTS_BY_LEVEL: Record<EducationLevel, Subject[]> = {
+  [EducationLevel.Primary]: [
+    Subject.CTS,                    // Creative & Technology Studies
+    Subject.DesignAndTechnology,    // Design & Technology
+    Subject.English,                // English Language
+    Subject.HomeEconomics,          // Home Economics
+    Subject.IntegratedScience,      // Integrated Science
+    Subject.Mathematics,            // Mathematics
+    Subject.SocialStudies,          // Social Studies
+    Subject.SpecialPaper1,          // Special Paper 1
+    Subject.SpecialPaper2,          // Special Paper 2
+    Subject.ZambianLanguages        // Zambian Languages
+  ],
+  [EducationLevel.JuniorSecondary]: [
+    Subject.AgriculturalScience,    // Agricultural Science
+    Subject.ArtAndDesign,           // Art & Design
+    Subject.BusinessStudies,        // Business Studies
+    Subject.ComputerStudies,        // Computer Studies
+    Subject.DesignAndTechnology,    // Design & Technology
+    Subject.English,                // English Language
+    Subject.French,                 // French
+    Subject.HomeEconomics,          // Home Economics
+    Subject.IntegratedScience,      // Integrated Science
+    Subject.Mathematics,            // Mathematics
+    Subject.Music,                  // Music
+    Subject.PhysicalEducation,      // Physical Education
+    Subject.ReligiousEducation,     // Religious Education
+    Subject.SocialStudies,          // Social Studies
+    Subject.ZambianLanguages        // Zambian Languages
+  ],
+  [EducationLevel.SeniorSecondary]: [
+     Subject.AdditionalMathematics, // Additional Mathematics
+     Subject.AgriculturalScience,   // Agricultural Science
+     Subject.ArtAndDesign,          // Art & Design
+     Subject.Biology,               // Biology
+     Subject.Chemistry,             // Chemistry
+     Subject.Chinese,               // Chinese
+     Subject.Civics,                // Civic Education
+     Subject.Commerce,              // Commerce
+     Subject.ComputerStudies,       // Computer Studies
+     Subject.DesignAndTechnology,   // Design & Technology
+     Subject.English,               // English Language
+     Subject.FoodAndNutrition,      // Food & Nutrition
+     Subject.French,                // French
+     Subject.Geography,             // Geography
+     Subject.History,               // History
+     Subject.Literature,            // Literature in English
+     Subject.Mathematics,           // Mathematics
+     Subject.MusicalArtsEducation,  // Musical Arts Education (Renamed from Music for Senior)
+     Subject.Physics,               // Physics
+     Subject.Accounts,              // Principles of Accounts
+     Subject.ReligiousEducation,    // Religious Education
+     Subject.ZambianLanguages       // Zambian Languages
   ]
 };

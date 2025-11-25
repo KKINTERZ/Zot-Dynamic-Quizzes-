@@ -1,8 +1,7 @@
-
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { EducationLevel, Subject, QuizHistoryItem } from '../types';
-import { Trophy, Medal, Crown, Star, User, ArrowLeft, Filter, GraduationCap, BookOpen, TrendingUp } from 'lucide-react';
-import { SUBJECT_TOPICS } from '../data/subjectTopics';
+import { Trophy, Medal, Crown, Star, User, ArrowLeft, Filter, GraduationCap, BookOpen, TrendingUp, AlertCircle } from 'lucide-react';
+import { SUBJECT_TOPICS, SUBJECTS_BY_LEVEL } from '../data/subjectTopics';
 
 interface LeaderboardViewProps {
   history: QuizHistoryItem[];
@@ -93,17 +92,23 @@ const LeaderboardView: React.FC<LeaderboardViewProps> = ({ history, onHome }) =>
 
   // Get subjects available for the active level (for the dropdown)
   const availableSubjects = useMemo(() => {
-      // We need to invert the SUBJECT_TOPICS or iterate keys to find valid subjects for this level
-      // A simpler way based on existing SUBJECTS_BY_LEVEL in App.tsx (replicated logic here briefly)
-      // Since we don't import SUBJECTS_BY_LEVEL from App, we filter keys from Subject enum if needed
-      // Or just list all. For UI cleanliness, we'll iterate the enum.
-      
-      return Object.values(Subject).filter(subj => {
-         // This is a rough filter. Ideally pass available subjects as prop. 
-         // For now, listing all is okay, or we can assume most common ones.
-         return true; 
-      }).sort();
-  }, []);
+      // Use the shared SUBJECTS_BY_LEVEL mapping
+      const subjects = SUBJECTS_BY_LEVEL[activeLevel] || [];
+      return [...subjects].sort(); // Sort alphabetically for easier selection
+  }, [activeLevel]);
+
+  // Ensure selected subject is valid when level changes
+  useEffect(() => {
+      if (viewMode === 'SUBJECT') {
+          // If current selection is ALL or not in the new level's list (and list is not empty)
+          if (selectedSubject === 'ALL' || (availableSubjects.length > 0 && !availableSubjects.includes(selectedSubject as Subject))) {
+              // Default to first available subject
+              if (availableSubjects.length > 0) {
+                  setSelectedSubject(availableSubjects[0]);
+              }
+          }
+      }
+  }, [activeLevel, viewMode, availableSubjects, selectedSubject]);
 
   return (
     <div className="max-w-5xl mx-auto animate-fade-in p-4 sm:p-0 pb-20">
@@ -124,6 +129,19 @@ const LeaderboardView: React.FC<LeaderboardViewProps> = ({ history, onHome }) =>
         <p className="text-gray-600 dark:text-gray-400">See who is leading the charts in ZOT Dynamic Quizzes.</p>
       </div>
 
+      {/* Development Disclaimer Banner */}
+      <div className="mb-8 p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl flex items-start gap-3 shadow-sm">
+        <div className="p-2 bg-amber-100 dark:bg-amber-900/40 rounded-full shrink-0 text-amber-600 dark:text-amber-400 mt-0.5">
+           <AlertCircle className="w-5 h-5" />
+        </div>
+        <div>
+           <h4 className="font-bold text-amber-800 dark:text-amber-200 text-sm mb-1">Feature Under Development</h4>
+           <p className="text-sm text-amber-700 dark:text-amber-300 leading-relaxed">
+             This feature is coming soon! The statistics and names shown below are currently <strong>not real</strong> and are displayed only to demonstrate the general layout. We are working hard to complete this feature and will have real-time rankings available in a few months.
+           </p>
+        </div>
+      </div>
+
       {/* Level Tabs */}
       <div className="flex justify-center mb-8">
         <div className="bg-white dark:bg-gray-800 p-1.5 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 inline-flex flex-wrap justify-center gap-2">
@@ -132,7 +150,7 @@ const LeaderboardView: React.FC<LeaderboardViewProps> = ({ history, onHome }) =>
               key={level}
               onClick={() => {
                   setActiveLevel(level);
-                  setSelectedSubject('ALL'); // Reset subject on level change
+                  // Note: selectedSubject reset is handled by useEffect
               }}
               className={`px-4 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2 ${
                 activeLevel === level 
@@ -176,10 +194,7 @@ const LeaderboardView: React.FC<LeaderboardViewProps> = ({ history, onHome }) =>
               </button>
 
               <button
-                onClick={() => {
-                    setViewMode('SUBJECT');
-                    if (selectedSubject === 'ALL') setSelectedSubject(Subject.Mathematics); // Default to Math
-                }}
+                onClick={() => setViewMode('SUBJECT')}
                 className={`w-full text-left px-4 py-3 rounded-xl text-sm font-medium transition-colors flex items-center justify-between ${
                   viewMode === 'SUBJECT' 
                   ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800' 
