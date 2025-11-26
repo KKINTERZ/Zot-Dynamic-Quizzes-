@@ -13,9 +13,10 @@ interface QuizInterfaceProps {
     answers: { questionId: number; selectedIndex: number }[];
     questionTimeLeft?: number;
   };
+  isExamMode?: boolean;
 }
 
-const QuizInterface: React.FC<QuizInterfaceProps> = ({ subject, questions, onComplete, onCancel, initialProgress }) => {
+const QuizInterface: React.FC<QuizInterfaceProps> = ({ subject, questions, onComplete, onCancel, initialProgress, isExamMode = false }) => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(initialProgress?.currentQuestionIndex || 0);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [answers, setAnswers] = useState<{ questionId: number; selectedIndex: number }[]>(initialProgress?.answers || []);
@@ -193,7 +194,7 @@ const QuizInterface: React.FC<QuizInterfaceProps> = ({ subject, questions, onCom
 
   // Sound Effects for Answer Feedback
   useEffect(() => {
-    if (showFeedback) {
+    if (showFeedback && !isExamMode) {
         const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
         const ctx = new AudioContextClass();
         
@@ -229,7 +230,7 @@ const QuizInterface: React.FC<QuizInterfaceProps> = ({ subject, questions, onCom
             if(ctx.state !== 'closed') ctx.close();
         }, 600);
     }
-  }, [showFeedback, selectedOption, currentQuestion]);
+  }, [showFeedback, selectedOption, currentQuestion, isExamMode]);
 
   const playCompletionSound = () => {
     try {
@@ -268,12 +269,17 @@ const QuizInterface: React.FC<QuizInterfaceProps> = ({ subject, questions, onCom
 
   const handleTimeout = () => {
     setIsTimerActive(false);
-    if (selectedOption === null) {
-       const newAnswers = [...answers, { questionId: currentQuestion.id, selectedIndex: -1 }];
-       setAnswers(newAnswers);
-       setShowFeedback(true);
+    if (isExamMode) {
+       // In exam mode, timeout implies a skipped answer or forced submission of what is selected
+       handleExamModeSubmit();
     } else {
-       handleSubmitAnswer();
+       if (selectedOption === null) {
+          const newAnswers = [...answers, { questionId: currentQuestion.id, selectedIndex: -1 }];
+          setAnswers(newAnswers);
+          setShowFeedback(true);
+       } else {
+          handleSubmitAnswer();
+       }
     }
   };
 
@@ -291,26 +297,41 @@ const QuizInterface: React.FC<QuizInterfaceProps> = ({ subject, questions, onCom
   };
 
   const handleOptionSelect = (index: number) => {
-    if (showFeedback) return; 
+    if (showFeedback && !isExamMode) return; 
     setSelectedOption(index);
   };
 
+  const handleExamModeSubmit = () => {
+    const finalSelection = selectedOption !== null ? selectedOption : -1;
+    const newAnswers = [...answers, { questionId: currentQuestion.id, selectedIndex: finalSelection }];
+    setAnswers(newAnswers);
+
+    if (isLastQuestion) {
+        playCompletionSound();
+        clearSession();
+        onComplete(newAnswers);
+    } else {
+        setCurrentQuestionIndex(prev => prev + 1);
+        setSelectedOption(null);
+        // Timer resets in useEffect
+    }
+  };
+
   const handleSubmitAnswer = () => {
-    setShowFeedback(true);
-    setIsTimerActive(false);
+    if (isExamMode) {
+        handleExamModeSubmit();
+    } else {
+        setShowFeedback(true);
+        setIsTimerActive(false);
+    }
   };
 
   const handleNext = () => {
+    // This is primarily for "Feedback Mode" where user explicitly clicks "Next Question"
+    // In Exam Mode, handleSubmitAnswer handles progression.
     if (!showFeedback) { 
-        const finalSelection = selectedOption !== null ? selectedOption : -1;
-        const newAnswers = [...answers, { questionId: currentQuestion.id, selectedIndex: finalSelection }];
-        setAnswers(newAnswers);
-        if (isLastQuestion) {
-             playCompletionSound();
-             clearSession(); // Clear storage
-             onComplete(newAnswers);
-             return;
-        }
+        // Fallback safety if triggered weirdly
+        handleSubmitAnswer();
     } else {
         const finalSelection = selectedOption !== null ? selectedOption : -1;
         const existingAnswerIndex = answers.findIndex(a => a.questionId === currentQuestion.id);
@@ -357,6 +378,7 @@ const QuizInterface: React.FC<QuizInterfaceProps> = ({ subject, questions, onCom
           <div className="flex items-center gap-2">
             <h2 className="text-xl font-bold text-gray-800 mb-1">{subject} Quiz</h2>
             {initialProgress && isFirstRender.current && <span className="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full">Resumed</span>}
+            {isExamMode && <span className="text-xs bg-orange-100 text-orange-800 px-2 py-0.5 rounded-full font-bold">Exam Mode</span>}
           </div>
           <p className="text-sm text-gray-500">Question {currentQuestionIndex + 1} of {questions.length}</p>
         </div>
@@ -439,7 +461,7 @@ const QuizInterface: React.FC<QuizInterfaceProps> = ({ subject, questions, onCom
             let buttonStyle = "border-gray-200 hover:border-green-400 hover:bg-green-50";
             let icon = null;
 
-            if (showFeedback) {
+            if (showFeedback && !isExamMode) {
               if (idx === currentQuestion.correctAnswerIndex) {
                 buttonStyle = "border-green-500 bg-green-50 text-green-900 font-medium";
                 icon = <CheckCircle className="w-5 h-5 text-green-500 ml-auto" />;
@@ -457,7 +479,7 @@ const QuizInterface: React.FC<QuizInterfaceProps> = ({ subject, questions, onCom
               <button
                 key={idx}
                 onClick={() => handleOptionSelect(idx)}
-                disabled={showFeedback}
+                disabled={showFeedback && !isExamMode}
                 className={`w-full text-left p-4 rounded-xl border-2 transition-all flex items-center ${buttonStyle}`}
                 aria-label={`Option ${String.fromCharCode(65 + idx)}: ${option}`}
                 aria-pressed={selectedOption === idx}
@@ -472,7 +494,7 @@ const QuizInterface: React.FC<QuizInterfaceProps> = ({ subject, questions, onCom
           })}
         </div>
 
-        {showFeedback && (
+        {showFeedback && !isExamMode && (
           <div className="mt-6 p-4 bg-green-50 rounded-lg border border-green-100 animate-fade-in">
             <p className="text-sm font-semibold text-green-900 mb-1">Explanation:</p>
             <p className="text-sm text-green-800">
@@ -487,24 +509,36 @@ const QuizInterface: React.FC<QuizInterfaceProps> = ({ subject, questions, onCom
 
       {/* Footer Actions */}
       <div className="flex justify-end">
-        {!showFeedback ? (
-          <button
-            onClick={handleSubmitAnswer}
-            disabled={selectedOption === null}
-            className="px-6 py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-md"
-            aria-label="Check your answer"
-          >
-            Check Answer
-          </button>
+        {isExamMode ? (
+            <button
+                onClick={handleSubmitAnswer}
+                disabled={selectedOption === null}
+                className="px-6 py-3 bg-indigo-600 text-white rounded-lg font-semibold hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-md flex items-center gap-2"
+                aria-label={isLastQuestion ? "Finish Exam" : "Next Question"}
+            >
+                {isLastQuestion ? 'Finish Exam' : 'Next Question'}
+                {!isLastQuestion && <ArrowRight className="w-4 h-4" />}
+            </button>
         ) : (
-          <button
-            onClick={handleNext}
-            className="px-6 py-3 bg-gray-900 text-white rounded-lg font-semibold hover:bg-gray-800 flex items-center gap-2 transition-colors shadow-md"
-            aria-label={isLastQuestion ? "Finish Quiz" : "Go to next question"}
-          >
-            {isLastQuestion ? 'Finish Quiz' : 'Next Question'}
-            <ArrowRight className="w-4 h-4" />
-          </button>
+            !showFeedback ? (
+            <button
+                onClick={handleSubmitAnswer}
+                disabled={selectedOption === null}
+                className="px-6 py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-md"
+                aria-label="Check your answer"
+            >
+                Check Answer
+            </button>
+            ) : (
+            <button
+                onClick={handleNext}
+                className="px-6 py-3 bg-gray-900 text-white rounded-lg font-semibold hover:bg-gray-800 flex items-center gap-2 transition-colors shadow-md"
+                aria-label={isLastQuestion ? "Finish Quiz" : "Go to next question"}
+            >
+                {isLastQuestion ? 'Finish Quiz' : 'Next Question'}
+                <ArrowRight className="w-4 h-4" />
+            </button>
+            )
         )}
       </div>
     </div>

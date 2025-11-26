@@ -29,7 +29,9 @@ const generateIllustration = async (prompt: string): Promise<string | undefined>
         const response = await ai.models.generateContent({
             model: 'gemini-2.5-flash-image',
             contents: {
-                parts: [{ text: `Create a clear, simple, educational diagram or illustration on a white background for the following concept: ${prompt}. Do not include any text labels inside the image.` }]
+                parts: [{ text: `Create a high-quality, clear, educational diagram or line-drawing illustration on a plain white background for the following concept: "${prompt}". 
+                Style: Textbook illustration, clean lines, minimalist, high contrast.
+                Important: Do not include complex text labels inside the image as they may be illegible.` }]
             },
             config: {
                 imageConfig: {
@@ -61,7 +63,8 @@ export const generateQuiz = async (
   questionCount: number | 'Auto', 
   customContext?: string,
   topic?: string,
-  difficulty: Difficulty = 'Auto'
+  difficulty: Difficulty = 'Auto',
+  includeImages: boolean = true
 ): Promise<Question[]> => {
   
   // Determine if we are targeting a specific Literature Book
@@ -109,13 +112,30 @@ export const generateQuiz = async (
   - For mathematical exponents or powers, use the caret symbol ^ (e.g., write 2 to the power of 3 as 2^3, x squared as x^2).
   - For chemical formulas or subscripts, use the underscore symbol _ (e.g., write H2O as H_2O, CO2 as CO_2).
   - Do not use LaTeX formatting like $x^2$. Use simple text with ^ and _ markers.
-
-  VISUAL AIDS:
-  If a question would benefit significantly from a visual diagram (e.g. geometry shapes, circuit diagrams, biological structures, chemical setups, geography maps), provide a clear, detailed visual description in the 'ip' (image_prompt) field.
-  The description should be suitable for an AI image generator to create a simple, clean, educational line drawing or diagram on a white background.
-  If no image is strictly necessary, omit the 'ip' field or leave it empty.
-  Do NOT ask for images containing text labels, as AI often misspells them. Describe the visual structure only.
   `;
+
+  // Visual Aids Logic - Proactively request images for relevant subjects only if enabled
+  if (includeImages && [
+      Subject.Mathematics, Subject.Physics, Subject.Biology, 
+      Subject.Geography, Subject.Chemistry, Subject.IntegratedScience, 
+      Subject.DesignAndTechnology, Subject.AgriculturalScience,
+      Subject.PhysicalEducation, Subject.ComputerStudies
+    ].includes(subject)) {
+      prompt += `\n\nVISUAL CONTENT REQUIREMENT:
+      This subject (${subject}) often relies on diagrams, charts, and visual aids.
+      You MUST identifying questions that would be better understood with a visual illustration.
+      For at least 30% of the questions (or where relevant), populate the 'ip' (image_prompt) field.
+      
+      Guidelines for 'ip':
+      - Describe the visual scene literal and clearly for an AI image generator.
+      - Examples: "A diagram of a plant cell showing the nucleus and cell wall", "A right-angled triangle with sides 3cm and 4cm", "A simple electrical circuit with a battery and a bulb".
+      - Do NOT ask for images containing text/labels as AI often misspells them. Focus on the structure.
+      `;
+  } else if (includeImages) {
+      prompt += `\n\nVISUAL AIDS: If a question benefits significantly from a visual (e.g. a map, a symbol, a specific object), provide a description in the 'ip' (image_prompt) field. Otherwise, leave 'ip' empty.`;
+  } else {
+      prompt += `\n\nVISUAL AIDS: Do not provide any visual aids. Leave the 'ip' (image_prompt) field empty for all questions.`;
+  }
 
   // Difficulty Logic
   let difficultyInstruction = "";
@@ -228,7 +248,7 @@ export const generateQuiz = async (
           let imageUrl = undefined;
           
           // If the model provided an image prompt (ip) and it's not empty, generate an image
-          if (q.ip && typeof q.ip === 'string' && q.ip.trim().length > 5) {
+          if (includeImages && q.ip && typeof q.ip === 'string' && q.ip.trim().length > 5) {
              imageUrl = await generateIllustration(q.ip);
           }
 
