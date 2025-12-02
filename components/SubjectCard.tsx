@@ -12,51 +12,86 @@ import {
 interface SubjectCardProps {
   subject: Subject;
   onClick: (subject: Subject) => void;
+  isTeacherMode?: boolean; // Prop kept for API compatibility but not used for icon color
 }
 
 const SubjectCard: React.FC<SubjectCardProps> = ({ subject, onClick }) => {
-  const getIcon = () => {
+  
+  const getIconAndColor = () => {
     switch (subject) {
-      case Subject.Mathematics: return <Calculator className="w-8 h-8 text-blue-500" />;
-      case Subject.Biology: return <Dna className="w-8 h-8 text-green-500" />;
-      case Subject.Physics: return <Zap className="w-8 h-8 text-yellow-500" />;
-      case Subject.Chemistry: return <FlaskConical className="w-8 h-8 text-purple-500" />;
-      case Subject.Civics: return <Globe className="w-8 h-8 text-orange-500" />;
-      case Subject.English: return <BookOpen className="w-8 h-8 text-red-500" />;
+      case Subject.Mathematics: 
+        return { icon: <Calculator className="w-8 h-8 text-blue-600" />, colorClass: "hover:border-blue-400 group-hover:bg-blue-50 dark:group-hover:bg-blue-900/30" };
+      case Subject.Biology: 
+        return { icon: <Dna className="w-8 h-8 text-green-600" />, colorClass: "hover:border-green-400 group-hover:bg-green-50 dark:group-hover:bg-green-900/30" };
+      case Subject.Physics: 
+        return { icon: <Zap className="w-8 h-8 text-purple-600" />, colorClass: "hover:border-purple-400 group-hover:bg-purple-50 dark:group-hover:bg-purple-900/30" };
+      case Subject.Chemistry: 
+        return { icon: <FlaskConical className="w-8 h-8 text-teal-600" />, colorClass: "hover:border-teal-400 group-hover:bg-teal-50 dark:group-hover:bg-teal-900/30" };
+      case Subject.Civics: 
+        return { icon: <Globe className="w-8 h-8 text-orange-600" />, colorClass: "hover:border-orange-400 group-hover:bg-orange-50 dark:group-hover:bg-orange-900/30" };
+      case Subject.English: 
+        return { icon: <BookOpen className="w-8 h-8 text-pink-600" />, colorClass: "hover:border-pink-400 group-hover:bg-pink-50 dark:group-hover:bg-pink-900/30" };
       
-      case Subject.History: return <Landmark className="w-8 h-8 text-amber-700" />;
-      case Subject.Geography: return <Map className="w-8 h-8 text-emerald-600" />;
-      case Subject.ReligiousEducation: return <BookHeart className="w-8 h-8 text-pink-500" />;
-      case Subject.Commerce: return <TrendingUp className="w-8 h-8 text-indigo-500" />;
-      case Subject.Accounts: return <BarChart3 className="w-8 h-8 text-slate-600" />;
-      case Subject.ComputerStudies: return <Monitor className="w-8 h-8 text-cyan-500" />;
-      case Subject.AgriculturalScience: return <Sprout className="w-8 h-8 text-lime-600" />;
-      case Subject.Literature: return <Feather className="w-8 h-8 text-rose-400" />;
-      case Subject.AdditionalMathematics: return <Sigma className="w-8 h-8 text-blue-700" />;
+      case Subject.History: 
+        return { icon: <Landmark className="w-8 h-8 text-amber-600" />, colorClass: "hover:border-amber-400 group-hover:bg-amber-50 dark:group-hover:bg-amber-900/30" };
+      case Subject.Geography: 
+        return { icon: <Map className="w-8 h-8 text-emerald-600" />, colorClass: "hover:border-emerald-400 group-hover:bg-emerald-50 dark:group-hover:bg-emerald-900/30" };
+      case Subject.ReligiousEducation: 
+        return { icon: <BookHeart className="w-8 h-8 text-indigo-600" />, colorClass: "hover:border-indigo-400 group-hover:bg-indigo-50 dark:group-hover:bg-indigo-900/30" };
+      case Subject.Commerce: 
+        return { icon: <TrendingUp className="w-8 h-8 text-cyan-600" />, colorClass: "hover:border-cyan-400 group-hover:bg-cyan-50 dark:group-hover:bg-cyan-900/30" };
+      case Subject.Accounts: 
+        return { icon: <BarChart3 className="w-8 h-8 text-slate-600 dark:text-slate-400" />, colorClass: "hover:border-slate-400 group-hover:bg-slate-50 dark:group-hover:bg-slate-800" };
+      case Subject.ComputerStudies: 
+        return { icon: <Monitor className="w-8 h-8 text-gray-700 dark:text-gray-300" />, colorClass: "hover:border-gray-400 group-hover:bg-gray-100 dark:group-hover:bg-gray-700" };
+      case Subject.AgriculturalScience: 
+        return { icon: <Sprout className="w-8 h-8 text-lime-600" />, colorClass: "hover:border-lime-400 group-hover:bg-lime-50 dark:group-hover:bg-lime-900/30" };
+      case Subject.Literature: 
+        return { icon: <Feather className="w-8 h-8 text-rose-600" />, colorClass: "hover:border-rose-400 group-hover:bg-rose-50 dark:group-hover:bg-rose-900/30" };
+      case Subject.AdditionalMathematics: 
+        return { icon: <Sigma className="w-8 h-8 text-blue-700" />, colorClass: "hover:border-blue-500 group-hover:bg-blue-100 dark:group-hover:bg-blue-900/40" };
       
-      case Subject.IntegratedScience: return <Microscope className="w-8 h-8 text-teal-500" />;
-      case Subject.SocialStudies: return <Users className="w-8 h-8 text-orange-600" />;
+      case Subject.IntegratedScience: 
+        return { icon: <Microscope className="w-8 h-8 text-teal-500" />, colorClass: "hover:border-teal-400 group-hover:bg-teal-50 dark:group-hover:bg-teal-900/30" };
+      case Subject.SocialStudies: 
+        return { icon: <Users className="w-8 h-8 text-orange-500" />, colorClass: "hover:border-orange-400 group-hover:bg-orange-50 dark:group-hover:bg-orange-900/30" };
 
       // New Subjects
-      case Subject.CTS: return <Wrench className="w-8 h-8 text-stone-500" />;
-      case Subject.HomeEconomics: return <ChefHat className="w-8 h-8 text-pink-400" />;
-      case Subject.BusinessStudies: return <Briefcase className="w-8 h-8 text-indigo-600" />;
-      case Subject.DesignAndTechnology: return <DraftingCompass className="w-8 h-8 text-slate-700" />;
-      case Subject.ArtAndDesign: return <Palette className="w-8 h-8 text-fuchsia-500" />;
-      case Subject.ZambianLanguages: return <MessageCircle className="w-8 h-8 text-amber-600" />;
-      case Subject.French: return <Globe className="w-8 h-8 text-blue-400" />; 
-      case Subject.Chinese: return <Languages className="w-8 h-8 text-red-600" />;
-      case Subject.FoodAndNutrition: return <UtensilsCrossed className="w-8 h-8 text-red-400" />;
-      case Subject.Music: return <Music className="w-8 h-8 text-pink-600" />;
-      case Subject.MusicalArtsEducation: return <Music className="w-8 h-8 text-violet-600" />;
-      case Subject.PhysicalEducation: return <Activity className="w-8 h-8 text-blue-600" />;
+      case Subject.CTS: 
+        return { icon: <Wrench className="w-8 h-8 text-indigo-500" />, colorClass: "hover:border-indigo-400 group-hover:bg-indigo-50 dark:group-hover:bg-indigo-900/30" };
+      case Subject.HomeEconomics: 
+        return { icon: <ChefHat className="w-8 h-8 text-pink-500" />, colorClass: "hover:border-pink-400 group-hover:bg-pink-50 dark:group-hover:bg-pink-900/30" };
+      case Subject.BusinessStudies: 
+        return { icon: <Briefcase className="w-8 h-8 text-blue-800" />, colorClass: "hover:border-blue-500 group-hover:bg-blue-100 dark:group-hover:bg-blue-900/40" };
+      case Subject.DesignAndTechnology: 
+        return { icon: <DraftingCompass className="w-8 h-8 text-cyan-700" />, colorClass: "hover:border-cyan-500 group-hover:bg-cyan-100 dark:group-hover:bg-cyan-900/40" };
+      case Subject.ArtAndDesign: 
+        return { icon: <Palette className="w-8 h-8 text-fuchsia-600" />, colorClass: "hover:border-fuchsia-400 group-hover:bg-fuchsia-50 dark:group-hover:bg-fuchsia-900/30" };
+      case Subject.ZambianLanguages: 
+        return { icon: <MessageCircle className="w-8 h-8 text-yellow-600" />, colorClass: "hover:border-yellow-400 group-hover:bg-yellow-50 dark:group-hover:bg-yellow-900/30" };
+      case Subject.French: 
+        return { icon: <Globe className="w-8 h-8 text-blue-500" />, colorClass: "hover:border-blue-400 group-hover:bg-blue-50 dark:group-hover:bg-blue-900/30" }; 
+      case Subject.Chinese: 
+        return { icon: <Languages className="w-8 h-8 text-red-600" />, colorClass: "hover:border-red-400 group-hover:bg-red-50 dark:group-hover:bg-red-900/30" };
+      case Subject.FoodAndNutrition: 
+        return { icon: <UtensilsCrossed className="w-8 h-8 text-orange-600" />, colorClass: "hover:border-orange-400 group-hover:bg-orange-50 dark:group-hover:bg-orange-900/30" };
+      case Subject.Music: 
+        return { icon: <Music className="w-8 h-8 text-violet-600" />, colorClass: "hover:border-violet-400 group-hover:bg-violet-50 dark:group-hover:bg-violet-900/30" };
+      case Subject.MusicalArtsEducation: 
+        return { icon: <Music className="w-8 h-8 text-violet-700" />, colorClass: "hover:border-violet-500 group-hover:bg-violet-100 dark:group-hover:bg-violet-900/40" };
+      case Subject.PhysicalEducation: 
+        return { icon: <Activity className="w-8 h-8 text-green-500" />, colorClass: "hover:border-green-400 group-hover:bg-green-50 dark:group-hover:bg-green-900/30" };
 
-      case Subject.SpecialPaper1: return <Brain className="w-8 h-8 text-violet-600" />;
-      case Subject.SpecialPaper2: return <Grid3X3 className="w-8 h-8 text-cyan-600" />;
+      case Subject.SpecialPaper1: 
+        return { icon: <Brain className="w-8 h-8 text-indigo-500" />, colorClass: "hover:border-indigo-400 group-hover:bg-indigo-50 dark:group-hover:bg-indigo-900/30" };
+      case Subject.SpecialPaper2: 
+        return { icon: <Grid3X3 className="w-8 h-8 text-purple-500" />, colorClass: "hover:border-purple-400 group-hover:bg-purple-50 dark:group-hover:bg-purple-900/30" };
 
-      default: return <BookOpen className="w-8 h-8 text-gray-500" />;
+      default: return { icon: <BookOpen className="w-8 h-8 text-gray-600" />, colorClass: "hover:border-gray-400 group-hover:bg-gray-50" };
     }
   };
+
+  const { icon, colorClass } = getIconAndColor();
 
   const getDescription = () => {
      switch (subject) {
@@ -103,11 +138,11 @@ const SubjectCard: React.FC<SubjectCardProps> = ({ subject, onClick }) => {
   return (
     <button
       onClick={() => onClick(subject)}
-      className="flex flex-col items-start p-6 bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md border border-gray-100 dark:border-gray-700 transition-all hover:border-green-400 dark:hover:border-green-500 hover:-translate-y-1 w-full text-left group"
+      className={`flex flex-col items-start p-6 bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md border border-gray-100 dark:border-gray-700 transition-all ${colorClass} hover:-translate-y-1 w-full text-left group`}
       aria-label={`Select subject ${subject}: ${getDescription()}`}
     >
-      <div className="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg mb-4 group-hover:bg-green-50 dark:group-hover:bg-green-900/30 transition-colors">
-        {getIcon()}
+      <div className={`p-3 bg-gray-50 dark:bg-gray-700 rounded-lg mb-4 transition-colors`}>
+        {icon}
       </div>
       <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1">{subject}</h3>
       <p className="text-sm text-gray-500 dark:text-gray-400">{getDescription()}</p>

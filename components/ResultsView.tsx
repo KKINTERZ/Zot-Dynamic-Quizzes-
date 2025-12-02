@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Question, Subject, EducationLevel, Difficulty } from '../types';
 import { Trophy, RefreshCw, Home, XCircle, CheckCircle, Download, BrainCircuit, Loader2, RotateCcw, Eye, Lock } from 'lucide-react';
@@ -41,10 +42,9 @@ const ResultsView: React.FC<ResultsViewProps> = ({
   // Hide if Exam Mode is active AND it's the first attempt (retryCount 0) AND user hasn't forfeited
   const hideAnswers = isExamMode && retryCount === 0 && !forfeitRetry;
   
-  // Logic for allowing retry
-  // 1. If NOT Exam Mode: Always allow.
-  // 2. If Exam Mode: Allow only if retries < 1 AND user hasn't forfeited (viewed answers).
-  const canRetry = !isExamMode || (isExamMode && retryCount < 1 && !forfeitRetry);
+  // Logic for allowing retry (Retaking the same quiz)
+  // Only allow retry if Exam Mode is enabled AND limits aren't exceeded.
+  const canRetry = isExamMode && retryCount < 1 && !forfeitRetry;
 
   const calculateScore = () => {
     let correct = 0;
@@ -310,7 +310,7 @@ const ResultsView: React.FC<ResultsViewProps> = ({
             Download Report
           </button>
           
-          {/* RETAKE Logic */}
+          {/* RETAKE Logic - Only in Exam Mode */}
           {canRetry && (
               <button
                 onClick={onRetake}
@@ -318,7 +318,7 @@ const ResultsView: React.FC<ResultsViewProps> = ({
                 aria-label="Retake the same quiz"
               >
                 <RotateCcw className="w-4 h-4" />
-                {isExamMode ? `Retry Quiz (1 Left)` : 'Retry Quiz'}
+                {`Retry Quiz (1 Left)`}
               </button>
           )}
 

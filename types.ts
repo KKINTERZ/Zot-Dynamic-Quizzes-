@@ -61,7 +61,7 @@ export interface QuizResult {
   answers: { questionId: number; selectedIndex: number }[];
 }
 
-export type AppState = 'SELECTION' | 'TOPIC_SELECTION' | 'CONFIG' | 'LOADING' | 'QUIZ' | 'RESULTS' | 'ERROR' | 'LIVE_TUTOR' | 'ABOUT' | 'HELP' | 'HISTORY' | 'CONTACT' | 'LEADERBOARD' | 'TEACHER_PREVIEW';
+export type AppState = 'AUTH' | 'SELECTION' | 'TOPIC_SELECTION' | 'CONFIG' | 'LOADING' | 'QUIZ' | 'RESULTS' | 'ERROR' | 'LIVE_TUTOR' | 'ABOUT' | 'HELP' | 'HISTORY' | 'CONTACT' | 'LEADERBOARD' | 'TEACHER_PREVIEW' | 'PROFILE';
 
 export interface QuizConfig {
   subject: Subject;
@@ -77,13 +77,21 @@ export interface QuizHistoryItem {
   topic: string;
   level: EducationLevel;
   difficulty: Difficulty;
-  score: number;
+  score?: number; // Optional for Teacher History (Generation only)
   totalQuestions: number;
   questions: Question[];
-  answers: { questionId: number; selectedIndex: number }[];
+  answers?: { questionId: number; selectedIndex: number }[]; // Optional for Teacher History
 }
 
 export interface ChatMessage {
   role: 'user' | 'model';
   text: string;
+}
+
+export interface UserProfile {
+  uid?: string;
+  name: string;
+  email?: string;
+  isGuest: boolean;
+  role?: 'student' | 'teacher';
 }
